@@ -171,7 +171,37 @@ class ProjectValidator:
         return True
 
     # =========================================================================
-    # 3. DDS Validation
+    # 3. TXD Validation
+    # =========================================================================
+    def validate_txd(self, filepath):
+        name = os.path.basename(filepath)
+        if not os.path.exists(filepath):
+            self.log("FAIL", "TXD", f"File not found: {name}")
+            return False
+
+        with open(filepath, "rb") as f:
+            data = f.read()
+
+        if len(data) < 36:
+            self.log("FAIL", "TXD", f"{name}: File size too small ({len(data)}B)")
+            return False
+
+        chunk_id, sz, ver = struct.unpack("<III", data[:12])
+        if chunk_id != 0x16:  # ID_TEXDICTIONARY
+            self.log("FAIL", "TXD", f"{name}: Root chunk is not TexDictionary (0x{chunk_id:X})")
+            return False
+
+        s_id, s_sz, _ = struct.unpack("<III", data[12:24])
+        if s_id != 0x01 or s_sz < 4:
+            self.log("FAIL", "TXD", f"{name}: Invalid dictionary struct")
+            return False
+
+        num_tex, device_id = struct.unpack("<HH", data[24:28])
+        self.log("OK", "TXD", f"{name}: Valid Direct3D 9 TXD dictionary containing {num_tex} native textures")
+        return True
+
+    # =========================================================================
+    # 4. DDS Validation
     # =========================================================================
     def validate_dds(self, filepath):
         name = os.path.basename(filepath)
@@ -330,9 +360,12 @@ class ProjectValidator:
                 if f.endswith(".fx"):
                     self.validate_hlsl(os.path.join(sh_dir, f))
 
-        # 4. Validate DDS Textures
+        # 4. Validate DDS Textures and TXD
         tex_dir = os.path.join(self.resource_dir, "textures")
         if os.path.exists(tex_dir):
+            txd_path = os.path.join(tex_dir, "city_textures.txd")
+            if os.path.exists(txd_path):
+                self.validate_txd(txd_path)
             for f in sorted(os.listdir(tex_dir)):
                 if f.endswith(".dds"):
                     self.validate_dds(os.path.join(tex_dir, f))

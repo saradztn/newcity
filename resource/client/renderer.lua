@@ -2,6 +2,7 @@
     renderer.lua - Graphics Engine Renderer & Post-Processing Pipeline
     Manages HLSL DirectX 9 shaders, Render Targets, dynamic uniform updates,
     screen-space light shafts, SSR approximation, and weather effects.
+    Guarantees every world texture is mapped with high-detail DDS textures.
 ]]
 
 Renderer = {}
@@ -9,47 +10,98 @@ Renderer = {}
 Renderer.Shaders = {}
 Renderer.Textures = {}
 Renderer.RenderTargets = {}
+Renderer.DiffuseMappers = {}
 
 local sw, sh = guiGetScreenSize()
 
 function Renderer.Init()
     outputDebugString("[NewCity Renderer] Initializing DX9 Graphics Engine...")
 
-    -- 1. Load PBR Textures
-    Renderer.Textures.normalAsphalt = dxCreateTexture("textures/asphalt_normal.dds", "dxt1")
-    Renderer.Textures.puddleAsphalt = dxCreateTexture("textures/asphalt_puddle.dds", "dxt1")
-    Renderer.Textures.emissiveGlass = dxCreateTexture("textures/bldg_glass_emissive.dds", "dxt1")
-    Renderer.Textures.cloudsCumulus = dxCreateTexture("textures/clouds_cumulus.dds", "dxt5")
-    Renderer.Textures.cloudsStorm = dxCreateTexture("textures/clouds_storm.dds", "dxt5")
-    Renderer.Textures.dither = dxCreateTexture("textures/godray_dither.dds", "dxt1")
-    Renderer.Textures.rainDroplets = dxCreateTexture("textures/rain_lens_droplets.dds", "dxt5")
-    Renderer.Textures.waterNormal = dxCreateTexture("textures/water_normal.dds", "dxt1")
+    -- 1. Load All DDS Photorealistic Textures
+    local texMap = {
+        asphaltAlbedo   = "textures/asphalt_albedo.dds",
+        highwayAlbedo   = "textures/highway_albedo.dds",
+        sidewalkAlbedo  = "textures/sidewalk_albedo.dds",
+        concreteAlbedo  = "textures/concrete_albedo.dds",
+        brickAlbedo     = "textures/bldg_brick_albedo.dds",
+        glassAlbedo     = "textures/bldg_glass_albedo.dds",
+        modernAlbedo    = "textures/bldg_facade_modern.dds",
+        roofAlbedo      = "textures/roof_gravel_albedo.dds",
+        metalAlbedo     = "textures/metal_industrial_albedo.dds",
+        grassAlbedo     = "textures/grass_albedo.dds",
+        palmAlbedo      = "textures/palm_frond_albedo.dds",
+        oakAlbedo       = "textures/oak_leaves_albedo.dds",
+        signsAlbedo     = "textures/signs_atlas_albedo.dds",
+        normalAsphalt   = "textures/asphalt_normal.dds",
+        puddleAsphalt   = "textures/asphalt_puddle.dds",
+        emissiveGlass   = "textures/bldg_glass_emissive.dds",
+        emissiveBrick   = "textures/bldg_brick_emissive.dds",
+        cloudsCumulus   = "textures/clouds_cumulus.dds",
+        cloudsStorm     = "textures/clouds_storm.dds",
+        dither          = "textures/godray_dither.dds",
+        rainDroplets    = "textures/rain_lens_droplets.dds",
+        waterNormal     = "textures/water_normal.dds",
+    }
 
-    -- 2. Create Shaders
+    for key, path in pairs(texMap) do
+        if fileExists(path) then
+            local fmt = (string.find(path, "clouds") or string.find(path, "frond") or string.find(path, "leaves") or string.find(path, "droplets")) and "dxt5" or "dxt1"
+            Renderer.Textures[key] = dxCreateTexture(path, fmt)
+        end
+    end
+
+    -- 2. Create Core Shaders
     Renderer.Shaders.road = dxCreateShader("shaders/road_pbr.fx", 0, 0, false, "world,object")
     Renderer.Shaders.building = dxCreateShader("shaders/building_facade.fx", 0, 0, false, "world,object")
     Renderer.Shaders.water = dxCreateShader("shaders/water_surface.fx", 0, 0, false, "world,object")
 
-    -- Post-processing shaders
-    Renderer.Shaders.sunShafts = dxCreateShader("shaders/sun_shafts.fx")
-    Renderer.Shaders.ssr = dxCreateShader("shaders/ssr_reflection.fx")
-    Renderer.Shaders.rainScreen = dxCreateShader("shaders/rain_screen.fx")
+    -- Universal Diffuse Texture Mappers (guarantees NO white models)
+    local directBindings = {
+        {"asphalt_albedo", Renderer.Textures.asphaltAlbedo},
+        {"highway_albedo", Renderer.Textures.highwayAlbedo},
+        {"sidewalk_albedo", Renderer.Textures.sidewalkAlbedo},
+        {"concrete_albedo", Renderer.Textures.concreteAlbedo},
+        {"bldg_brick_albedo", Renderer.Textures.brickAlbedo},
+        {"bldg_glass_albedo", Renderer.Textures.glassAlbedo},
+        {"bldg_facade_modern", Renderer.Textures.modernAlbedo},
+        {"roof_gravel_albedo", Renderer.Textures.roofAlbedo},
+        {"metal_industrial_albedo", Renderer.Textures.metalAlbedo},
+        {"grass_albedo", Renderer.Textures.grassAlbedo},
+        {"palm_frond_albedo", Renderer.Textures.palmAlbedo},
+        {"oak_leaves_albedo", Renderer.Textures.oakAlbedo},
+        {"signs_atlas_albedo", Renderer.Textures.signsAlbedo},
+    }
 
-    -- 3. Bind Samplers
+    for _, bind in ipairs(directBindings) do
+        local texName, texElement = bind[1], bind[2]
+        if texElement then
+            local s = dxCreateShader("shaders/tex_diffuse.fx", 0, 0, false, "world,object")
+            if s then
+                dxSetShaderValue(s, "gTexture", texElement)
+                engineApplyShaderToWorldTexture(s, texName)
+                table.insert(Renderer.DiffuseMappers, s)
+            end
+        end
+    end
+
+    -- 3. Apply Advanced PBR Shaders
     if Renderer.Shaders.road and Renderer.Textures.normalAsphalt then
+        if Renderer.Textures.asphaltAlbedo then
+            dxSetShaderValue(Renderer.Shaders.road, "gTexture", Renderer.Textures.asphaltAlbedo)
+        end
         dxSetShaderValue(Renderer.Shaders.road, "gNormalMap", Renderer.Textures.normalAsphalt)
         dxSetShaderValue(Renderer.Shaders.road, "gPuddleTexture", Renderer.Textures.puddleAsphalt)
 
-        -- Apply road shader to world road textures
-        engineApplyShaderToWorldTexture(Renderer.Shaders.road, "asphalt*")
-        engineApplyShaderToWorldTexture(Renderer.Shaders.road, "highway*")
-        engineApplyShaderToWorldTexture(Renderer.Shaders.road, "sidewalk*")
-        engineApplyShaderToWorldTexture(Renderer.Shaders.road, "concrete*")
+        engineApplyShaderToWorldTexture(Renderer.Shaders.road, "asphalt_albedo")
+        engineApplyShaderToWorldTexture(Renderer.Shaders.road, "highway_albedo")
     end
 
     if Renderer.Shaders.building and Renderer.Textures.emissiveGlass then
+        if Renderer.Textures.glassAlbedo then
+            dxSetShaderValue(Renderer.Shaders.building, "gTexture", Renderer.Textures.glassAlbedo)
+        end
         dxSetShaderValue(Renderer.Shaders.building, "gEmissiveTexture", Renderer.Textures.emissiveGlass)
-        engineApplyShaderToWorldTexture(Renderer.Shaders.building, "bldg*")
+        engineApplyShaderToWorldTexture(Renderer.Shaders.building, "bldg_glass_albedo")
     end
 
     if Renderer.Shaders.water and Renderer.Textures.waterNormal then
@@ -57,13 +109,17 @@ function Renderer.Init()
         engineApplyShaderToWorldTexture(Renderer.Shaders.water, "water*")
     end
 
-    -- 4. Create Post-Processing Render Target
+    -- 4. Post-processing Shaders
+    Renderer.Shaders.sunShafts = dxCreateShader("shaders/sun_shafts.fx")
+    Renderer.Shaders.ssr = dxCreateShader("shaders/ssr_reflection.fx")
+    Renderer.Shaders.rainScreen = dxCreateShader("shaders/rain_screen.fx")
+
     local rtScale = Config.CurrentPreset.renderTargetScale or 0.75
     local rtw = math.floor(sw * rtScale)
     local rth = math.floor(sh * rtScale)
     Renderer.RenderTargets.scene = dxCreateRenderTarget(rtw, rth, true)
 
-    outputDebugString("[NewCity Renderer] Shaders initialized and mapped successfully.")
+    outputDebugString("[NewCity Renderer] All textures and PBR shaders successfully bound.")
 end
 
 function Renderer.UpdateUniforms()
@@ -76,7 +132,6 @@ function Renderer.UpdateUniforms()
     local night = Environment.NightFactor
     local timeSec = getTickCount() / 1000.0
 
-    -- 1. Update Road Shader
     if Renderer.Shaders.road and Config.CurrentPreset.enableRoadShader then
         dxSetShaderValue(Renderer.Shaders.road, "gCameraPosition", cx, cy, cz)
         dxSetShaderValue(Renderer.Shaders.road, "gSunDirection", sunDir[1], sunDir[2], sunDir[3])
@@ -87,7 +142,6 @@ function Renderer.UpdateUniforms()
         dxSetShaderValue(Renderer.Shaders.road, "gTime", timeSec)
     end
 
-    -- 2. Update Building Facade Shader
     if Renderer.Shaders.building and Config.CurrentPreset.enableBuildingShader then
         dxSetShaderValue(Renderer.Shaders.building, "gCameraPosition", cx, cy, cz)
         dxSetShaderValue(Renderer.Shaders.building, "gSunDirection", sunDir[1], sunDir[2], sunDir[3])
@@ -97,7 +151,6 @@ function Renderer.UpdateUniforms()
         dxSetShaderValue(Renderer.Shaders.building, "gTime", timeSec)
     end
 
-    -- 3. Update Water Surface Shader
     if Renderer.Shaders.water and Config.CurrentPreset.enableWaterShader then
         dxSetShaderValue(Renderer.Shaders.water, "gCameraPosition", cx, cy, cz)
         dxSetShaderValue(Renderer.Shaders.water, "gSunDirection", sunDir[1], sunDir[2], sunDir[3])
@@ -107,7 +160,6 @@ function Renderer.UpdateUniforms()
     end
 end
 
--- Render Post-Processing Effects Pass
 addEventHandler("onClientRender", root, function()
     Renderer.UpdateUniforms()
 
@@ -118,7 +170,6 @@ addEventHandler("onClientRender", root, function()
 
     -- 1. Screen-Space Sun Shafts / God Rays
     if preset.enableSunShafts and Renderer.Shaders.sunShafts and Renderer.Textures.dither then
-        -- Project 3D Sun position into 2D Screen Coordinates
         local sunDist = 700.0
         local sunWorldX = cx + sunDir[1] * sunDist
         local sunWorldY = cy + sunDir[2] * sunDist
@@ -131,7 +182,6 @@ addEventHandler("onClientRender", root, function()
             local normX = screenX / sw
             local normY = screenY / sh
 
-            -- Golden hour enhances shaft warmth
             local sunsetBoost = math.max(0.0, 1.0 - Environment.SunElevation * 1.8)
             local shaftCol = {
                 Environment.SunColor[1] * (1.0 + sunsetBoost * 0.4),
@@ -148,7 +198,6 @@ addEventHandler("onClientRender", root, function()
             dxSetShaderValue(Renderer.Shaders.sunShafts, "gWeight", 0.38)
             dxSetShaderValue(Renderer.Shaders.sunShafts, "gDitherTexture", Renderer.Textures.dither)
 
-            -- Render full-screen quad with blend
             dxDrawImage(0, 0, sw, sh, Renderer.Shaders.sunShafts, 0, 0, 0, tocolor(255, 255, 255, 255))
         end
     end

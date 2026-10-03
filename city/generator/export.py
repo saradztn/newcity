@@ -60,6 +60,7 @@ class ResourceExporter:
 
         # Shaders
         shader_files = [
+            "shaders/tex_diffuse.fx",
             "shaders/road_pbr.fx",
             "shaders/building_facade.fx",
             "shaders/sun_shafts.fx",

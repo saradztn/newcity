@@ -2,6 +2,7 @@
 // water_surface.fx - Photorealistic Animated Water Shader for MTA:SA
 // Dual-scrolling wave normal maps, Fresnel sky reflection, sun specular glints,
 // and depth absorption gradient (shallow turquoise to deep navy).
+// Fully compliant with DirectX 9 SM 3.0 and SM 2.0 limits.
 //--------------------------------------------------------------------------------------
 
 float4x4 gWorld : WORLD;
@@ -53,9 +54,9 @@ VS_OUTPUT VertexShaderFunction(VS_INPUT input)
     return output;
 }
 
-float4 PixelShaderFunction(VS_OUTPUT input) : COLOR0
+// Shader Model 3.0: Dual-wave normal water
+float4 PixelShaderFunction_SM3(VS_OUTPUT input) : COLOR0
 {
-    // Dual scrolling wave UVs (different speeds & directions for organic ripples)
     float2 uv1 = input.TexCoord * 3.0 + float2(gTime * 0.03, gTime * 0.015);
     float2 uv2 = input.TexCoord * 6.0 + float2(-gTime * 0.02, gTime * 0.025);
 
@@ -68,16 +69,13 @@ float4 PixelShaderFunction(VS_OUTPUT input) : COLOR0
     float3 L = normalize(gSunDirection);
     float3 H = normalize(L + V);
 
-    // Deep water color vs shallow coastal turquoise
     float3 deepWater = float3(0.04, 0.12, 0.22);
     float3 shallowWater = float3(0.08, 0.28, 0.38);
     float3 waterBase = lerp(deepWater, shallowWater, saturate(input.WorldPos.z * 0.2 + 0.5));
 
-    // Fresnel Reflection of sky
     float NdotV = saturate(dot(N, V));
     float fresnel = 0.02 + 0.98 * pow(1.0 - NdotV, 5.0);
 
-    // Sun Specular glint
     float NdotH = saturate(dot(N, H));
     float spec = pow(NdotH, 128.0) * 2.5;
     float3 sunGlint = gSunColor * spec * fresnel;
@@ -88,12 +86,24 @@ float4 PixelShaderFunction(VS_OUTPUT input) : COLOR0
     return float4(finalColor, 0.92);
 }
 
+// Shader Model 2.0: Single wave normal fallback (< 25 instructions)
+float4 PixelShaderFunction_SM2(VS_OUTPUT input) : COLOR0
+{
+    float2 uv = input.TexCoord * 4.0 + float2(gTime * 0.02, gTime * 0.01);
+    float3 waveNormal = tex2D(WaveSampler, uv).xyz * 2.0 - 1.0;
+    float3 N = normalize(input.WorldNormal + waveNormal * 0.2);
+
+    float3 waterBase = float3(0.06, 0.18, 0.28);
+    float3 diffuse = waterBase + gAmbientColor * 0.5;
+    return float4(diffuse, 0.92);
+}
+
 technique WaterSurface
 {
     pass P0
     {
         VertexShader = compile vs_3_0 VertexShaderFunction();
-        PixelShader  = compile ps_3_0 PixelShaderFunction();
+        PixelShader  = compile ps_3_0 PixelShaderFunction_SM3();
     }
 }
 
@@ -102,6 +112,6 @@ technique WaterSurface_SM2
     pass P0
     {
         VertexShader = compile vs_2_0 VertexShaderFunction();
-        PixelShader  = compile ps_2_0 PixelShaderFunction();
+        PixelShader  = compile ps_2_0 PixelShaderFunction_SM2();
     }
 }

@@ -12,6 +12,7 @@
     <script src="client/debug_ui.lua" type="client"/>
     <script src="client/main.lua" type="client"/>
     <file src="data/city_layout.json"/>
+    <file src="shaders/tex_diffuse.fx"/>
     <file src="shaders/road_pbr.fx"/>
     <file src="shaders/building_facade.fx"/>
     <file src="shaders/sun_shafts.fx"/>

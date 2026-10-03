@@ -1,13 +1,14 @@
 --[[
     streaming.lua - Dynamic Cell-Based Asset & Object Streaming Engine
-    Loads DFF, LOD DFF, and COL files into allocated model IDs, creates world
-    objects, links LOD elements via setLowLODElement, and manages distance culling.
+    Loads DFF, LOD DFF, and COL files into allocated model IDs, imports TXD,
+    creates world objects, links LOD elements via setLowLODElement, and manages distance culling.
 ]]
 
 Streaming = {}
 
 Streaming.LoadedModels = {}      -- model_name -> { id, lodId }
 Streaming.SpawnedObjects = {}    -- list of { obj, lodObj, pos, model }
+Streaming.TXD = nil
 Streaming.IsLoaded = false
 
 function Streaming.Init()
@@ -33,9 +34,11 @@ function Streaming.Init()
 
     -- 1. Load TXD Texture Dictionary
     if fileExists("textures/city_textures.txd") then
-        local txd = engineLoadTXD("textures/city_textures.txd")
-        if txd then
-            outputDebugString("[NewCity Streaming] Loaded city_textures.txd dictionary.")
+        Streaming.TXD = engineLoadTXD("textures/city_textures.txd")
+        if Streaming.TXD then
+            outputDebugString("[NewCity Streaming] Successfully loaded city_textures.txd dictionary.")
+        else
+            outputDebugString("[NewCity Streaming] Warning: Native TXD failed to load; shader textures will provide fallback.", 2)
         end
     end
 
@@ -44,7 +47,6 @@ function Streaming.Init()
     for name, mInfo in pairs(data.models) do
         local modelId, lodModelId
 
-        -- Request dynamic model IDs or use static fallback IDs
         if engineRequestModel then
             modelId = engineRequestModel("object")
             lodModelId = engineRequestModel("object")
@@ -56,23 +58,13 @@ function Streaming.Init()
         end
 
         if modelId and lodModelId then
-            -- Load Primary DFF
-            if fileExists(mInfo.dff) then
-                local dff = engineLoadDFF(mInfo.dff)
-                if dff then
-                    engineReplaceModel(dff, modelId)
-                end
+            -- A. Import TXD FIRST (Crucial for GTA SA RenderWare texture assignment)
+            if Streaming.TXD then
+                engineImportTXD(Streaming.TXD, modelId)
+                engineImportTXD(Streaming.TXD, lodModelId)
             end
 
-            -- Load LOD DFF
-            if fileExists(mInfo.lod_dff) then
-                local lodDff = engineLoadDFF(mInfo.lod_dff)
-                if lodDff then
-                    engineReplaceModel(lodDff, lodModelId)
-                end
-            end
-
-            -- Load Collision (COL)
+            -- B. Load Collision (COL)
             if fileExists(mInfo.col) then
                 local col = engineLoadCOL(mInfo.col)
                 if col then
@@ -80,9 +72,25 @@ function Streaming.Init()
                 end
             end
 
-            -- Configure draw distances
-            local nearDist = (mInfo.lod_distance or 200.0) * lodMult
-            local farDist = (mInfo.far_lod_distance or 1500.0) * lodMult
+            -- C. Load Primary DFF
+            if fileExists(mInfo.dff) then
+                local dff = engineLoadDFF(mInfo.dff)
+                if dff then
+                    engineReplaceModel(dff, modelId)
+                end
+            end
+
+            -- D. Load LOD DFF
+            if fileExists(mInfo.lod_dff) then
+                local lodDff = engineLoadDFF(mInfo.lod_dff)
+                if lodDff then
+                    engineReplaceModel(lodDff, lodModelId)
+                end
+            end
+
+            -- E. Configure draw distances
+            local nearDist = (mInfo.lod_distance or 220.0) * lodMult
+            local farDist = (mInfo.far_lod_distance or 1600.0) * lodMult
             engineSetModelLODDistance(modelId, nearDist)
             engineSetModelLODDistance(lodModelId, farDist)
 
@@ -104,7 +112,6 @@ function Streaming.Init()
             local lodObj = createObject(mData.lodId, px, py, pz, rx, ry, rz, true)
 
             if obj and lodObj then
-                -- Link LOD element
                 setLowLODElement(obj, lodObj)
 
                 if inst.scale and inst.scale ~= 1.0 then

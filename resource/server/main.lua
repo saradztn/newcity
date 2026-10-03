@@ -4,8 +4,8 @@
     and server administration commands.
 ]]
 
--- Downtown Grand Boulevard Spawn Coordinates
-local CITY_SPAWN = {0.0, 10.0, 5.5}
+-- Downtown Grand Boulevard Spawn Coordinates (Relocated to requested origin)
+local CITY_SPAWN = {-4076.838, 502.024, 162.0}
 
 addEventHandler("onResourceStart", resourceRoot, function()
     outputServerLog("[NewAmericanCity] Resource started successfully. Procedural metropolis ready.")
