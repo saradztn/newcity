@@ -15,12 +15,30 @@ sampler2D Sampler0 = sampler_state
     AddressV = Wrap;
 };
 
+struct VS_INPUT
+{
+    float4 Position : POSITION0;
+    float2 TexCoord : TEXCOORD0;
+    float4 Color    : COLOR0;
+};
+
 struct VS_OUTPUT
 {
     float4 Position : POSITION0;
     float2 TexCoord : TEXCOORD0;
     float4 Color    : COLOR0;
 };
+
+float4x4 gWorldViewProjection : WORLDVIEWPROJECTION;
+
+VS_OUTPUT VertexShaderFunction(VS_INPUT input)
+{
+    VS_OUTPUT output;
+    output.Position = mul(input.Position, gWorldViewProjection);
+    output.TexCoord = input.TexCoord;
+    output.Color    = input.Color;
+    return output;
+}
 
 float4 PixelShaderFunction(VS_OUTPUT input) : COLOR0
 {
@@ -32,6 +50,8 @@ technique TexDiffuse
 {
     pass P0
     {
+        // When vertex shader is omitted in MTA world texture replacement,
+        // MTA:SA passes through fixed-function world transform.
         PixelShader = compile ps_2_0 PixelShaderFunction();
     }
 }

@@ -47,7 +47,7 @@ function Lighting.SetLightsEnabled(enabled)
         for _, lDef in ipairs(Lighting.LightDefinitions) do
             if count >= maxLights then break end
 
-            local col = COLOR_TEMPS[lDef.type] or COLOR_TEMPS.sodium
+            local col = lDef.color or COLOR_TEMPS[lDef.type] or COLOR_TEMPS.sodium
             local px, py, pz = lDef.pos[1], lDef.pos[2], lDef.pos[3]
             local rad = lDef.radius or 20.0
 

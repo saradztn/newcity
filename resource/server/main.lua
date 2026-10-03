@@ -4,8 +4,21 @@
     and server administration commands.
 ]]
 
--- Downtown Grand Boulevard Spawn Coordinates (Relocated to requested origin)
-local CITY_SPAWN = {-4076.838, 502.024, 162.0}
+-- Downtown Grand Boulevard Spawn Coordinates
+local CITY_POIS = {
+    center     = {-4076.838, 492.024, 162.6},
+    spawn      = {-4076.838, 492.024, 162.6},
+    plaza      = {-4076.838, 492.024, 162.6},
+    downtown   = {-4076.838, 572.024, 162.6},
+    hotel      = {-4076.838, 412.024, 162.6},
+    waterfront = {-4076.838, 672.024, 162.6},
+    bridge     = {-4076.838, 732.024, 176.6},
+    expressway = {-3876.838, 492.024, 174.6},
+    tunnel     = {-4076.838, 292.024, 162.6},
+    industrial = {-3956.838, 372.024, 162.6},
+    park       = {-4156.838, 652.024, 162.6},
+    cityhall   = {-4236.838, 652.024, 162.6},
+}
 
 addEventHandler("onResourceStart", resourceRoot, function()
     outputServerLog("[NewAmericanCity] Resource started successfully. Procedural metropolis ready.")
@@ -16,15 +29,13 @@ addEventHandler("onResourceStart", resourceRoot, function()
 end)
 
 -- Teleport command to spawn in the new city
-addCommandHandler("citytp", function(player, cmd, targetPlayerName)
-    local target = player
-    if targetPlayerName and hasObjectPermissionTo(player, "command.kick", false) then
-        target = getPlayerFromName(targetPlayerName) or player
-    end
+addCommandHandler("citytp", function(player, cmd, locName)
+    locName = locName and string.lower(locName) or "center"
+    local coords = CITY_POIS[locName] or CITY_POIS["center"]
 
-    if isElement(target) then
-        setElementPosition(target, CITY_SPAWN[1], CITY_SPAWN[2], CITY_SPAWN[3])
-        outputChatBox("[NewCity] Welcome to New American City! (Downtown Core)", target, 100, 220, 255)
+    if isElement(player) then
+        setElementPosition(player, coords[1], coords[2], coords[3])
+        outputChatBox(string.format("[NewCity] Welcome to New American City! Location: %s", locName), player, 100, 220, 255)
     end
 end)
 
@@ -37,5 +48,16 @@ addCommandHandler("citytime", function(player, cmd, hourStr, minStr)
         outputChatBox(string.format("[NewCity] Server time updated to %02d:%02d", h, m), root, 255, 220, 100)
     else
         outputChatBox("Usage: /citytime <0-23> [minute]", player, 255, 120, 120)
+    end
+end)
+
+-- Weather change command
+addCommandHandler("cityweather", function(player, cmd, weatherId)
+    local w = tonumber(weatherId)
+    if w and w >= 0 and w <= 20 then
+        setWeather(w)
+        outputChatBox(string.format("[NewCity] Server weather updated to ID %d", w), root, 255, 220, 100)
+    else
+        outputChatBox("Usage: /cityweather <0-20>", player, 255, 120, 120)
     end
 end)

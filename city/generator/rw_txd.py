@@ -1,25 +1,29 @@
 """
 rw_txd.py - RenderWare 3.6 TXD (Texture Dictionary) Binary Generator
-Creates standard GTA:SA PC compatible .txd files containing DXT1, DXT5,
-or 32-bit native textures with full mipmap levels.
 Conforms strictly to Direct3D 9 RpRasterPC_Header specification (88 bytes).
+Ensures GTA SA and MTA:SA correctly bind all native textures without falling back
+to untextured white models.
 """
 
 import struct
 from PIL import Image
 from .dds import get_raw_dxt_mipmaps
 
+RW_VERSION_SA = 0x1803FFFF  # RenderWare 3.6.0.3
 
-RW_VERSION_SA = 0x1803FFFF
-
-ID_STRUCT         = 0x01
-ID_EXTENSION      = 0x03
-ID_TEXTURENATIVE  = 0x15
-ID_TEXDICTIONARY  = 0x16
+ID_STRUCT        = 0x01
+ID_EXTENSION     = 0x03
+ID_TEXTURENATIVE = 0x15
+ID_TEXDICTIONARY = 0x16
 
 D3DFMT_DXT1 = 0x31545844  # 'DXT1'
 D3DFMT_DXT5 = 0x35545844  # 'DXT5'
-D3DFMT_A8R8G8B8 = 21
+
+RASTER_1555   = 0x0100
+RASTER_565    = 0x0200
+RASTER_4444   = 0x0400
+RASTER_8888   = 0x0500
+RASTER_MIPMAP = 0x0080
 
 
 def make_rw_chunk(chunk_id, data, version=RW_VERSION_SA):
@@ -28,29 +32,36 @@ def make_rw_chunk(chunk_id, data, version=RW_VERSION_SA):
 
 class TXDBuilder:
     def __init__(self):
-        self.textures = []  # list of (name, pil_image, format_type)
+        self.textures = []  # list of (name, pil_image, format_type, has_alpha)
 
-    def add_texture(self, name, pil_image, format_type='DXT1'):
+    def add_texture(self, name, pil_image, format_type='DXT1', has_alpha=False):
         """Registers a texture into the dictionary."""
-        # Sanitize name up to 31 chars
         clean_name = name.split('.')[0][:31]
-        self.textures.append((clean_name, pil_image, format_type))
+        if format_type.upper() == 'DXT5':
+            has_alpha = True
+        self.textures.append((clean_name, pil_image, format_type, has_alpha))
 
     def build_binary(self):
         num_textures = len(self.textures)
-        # TextureDictionary struct: count (uint16), deviceId (uint16: 1 for PC)
-        dict_struct = make_rw_chunk(ID_STRUCT, struct.pack('<HH', num_textures, 1))
+        # TextureDictionary struct: count (uint16), deviceId (uint16 = 9 for Direct3D 9)
+        dict_struct = make_rw_chunk(ID_STRUCT, struct.pack('<HH', num_textures, 9))
 
         native_chunks = []
-        for name, img, fmt in self.textures:
+        for name, img, fmt, has_alpha in self.textures:
             if img.mode != 'RGBA':
                 img = img.convert('RGBA')
 
             is_dxt1 = (fmt.upper() == 'DXT1')
             d3d_fmt = D3DFMT_DXT1 if is_dxt1 else D3DFMT_DXT5
-            raster_fmt = 0x8200 if is_dxt1 else 0x8500
-            depth = 16 if is_dxt1 else 32
-            compression = 0x08 if is_dxt1 else 0x09
+
+            if is_dxt1:
+                raster_fmt = (RASTER_1555 if has_alpha else RASTER_565) | RASTER_MIPMAP
+                depth = 16
+            else:
+                raster_fmt = RASTER_4444 | RASTER_MIPMAP
+                depth = 32
+
+            flags = 0x08 | (1 if has_alpha else 0)
 
             mips = get_raw_dxt_mipmaps(img, fmt.upper(), generate_mips=True)
             num_mips = len(mips)
@@ -63,8 +74,8 @@ class TXDBuilder:
 
             # Direct3D 9 RpRasterPC_Header (88 bytes total):
             # TextureFormat (72 bytes):
-            #   platformId: uint32 = 9
-            #   filter_and_addressing: uint32 = 0x1102 (linear filter 0x02, wrapU 0x01, wrapV 0x01)
+            #   platformId: uint32 = 9 (D3D9)
+            #   filter_and_addressing: uint32 = 0x1106 (linear-mip-linear 0x06, wrapU 0x01, wrapV 0x01)
             #   name: 32 bytes
             #   maskName: 32 bytes
             # RasterFormat (16 bytes):
@@ -75,11 +86,11 @@ class TXDBuilder:
             #   depth: uint8
             #   numLevels: uint8
             #   rasterType: uint8 = 4 (rwRASTERTYPETEXTURE)
-            #   compression: uint8 = 0x08 (compressed)
+            #   compression: uint8 = flags
             hdr = struct.pack(
                 '<II32s32sIIHHBBBB',
                 9,                  # platformId = Direct3D 9
-                0x1102,             # filterFlags: Linear (0x02) | wrapU (1<<8) | wrapV (1<<12)
+                0x1106,             # linear-mip-linear + wrap/wrap
                 name_bytes,
                 mask_bytes,
                 raster_fmt,
@@ -89,7 +100,7 @@ class TXDBuilder:
                 depth,
                 num_mips,
                 4,                  # rasterType = texture
-                compression
+                flags
             )
 
             # Mipmap data blocks: for each mip level, uint32 size followed by raw DXT bytes

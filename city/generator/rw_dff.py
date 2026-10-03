@@ -1,8 +1,9 @@
 """
 rw_dff.py - RenderWare 3.6 DFF Binary Stream Generator
 Generates fully compliant RenderWare Clump files for GTA:SA / MTA:SA.
-Includes FrameList, Geometry with Normals, UVs, Prelit vertex colors,
-MaterialList, Textures, BinMesh plugin extension, and Atomic chunks.
+Features exact binary structuring for FrameList, Geometry with Normals, UVs,
+Prelit vertex colors, MaterialList with D3D9 texture references, BinMesh PLG,
+and Atomic chunks.
 """
 
 import struct
@@ -59,22 +60,28 @@ def compute_bounding_sphere(vertices):
     center = (min_pt + max_pt) * 0.5
     dists = np.linalg.norm(vertices - center, axis=1)
     radius = float(dists.max()) if len(dists) > 0 else 1.0
-    return float(center[0]), float(center[1]), float(center[2]), max(radius, 0.1)
+    return float(center[0]), float(center[1]), float(center[2]), radius
 
 
 class DFFMesh:
-    def __init__(self):
-        self.vertices = []      # list or (N, 3) float32
-        self.normals = []       # list or (N, 3) float32
-        self.uvs = []           # list or (N, 2) float32
-        self.colors = []        # list or (N, 4) uint8
-        self.triangles = []     # list of (v0, v1, v2, mat_id)
+    """Represents a RenderWare 3.6 3D Mesh and generates DFF binary Clump."""
+    def __init__(self, name="mesh"):
+        self.name = name
+        self.vertices = []      # (N, 3) float
+        self.normals = []       # (N, 3) float
+        self.uvs = []           # (N, 2) float
+        self.colors = []        # (N, 4) uint8 RGBA
+        self.triangles = []     # (M, 4) uint16 (v0, v1, v2, material_id)
         self.materials = []     # list of dicts: {'texture': 'name', 'color': (255,255,255,255)}
 
     def add_material(self, texture_name="", color=(255, 255, 255, 255)):
+        clean_name = texture_name.split('.')[0] if texture_name else ""
+        for i, m in enumerate(self.materials):
+            if m['texture'] == clean_name and m['color'] == color:
+                return i
         mat_id = len(self.materials)
         self.materials.append({
-            'texture': texture_name,
+            'texture': clean_name,
             'color': color
         })
         return mat_id
@@ -104,25 +111,21 @@ class DFFMesh:
         num_triangles = len(tris)
 
         # 1. Build Geometry Struct
-        # Standard SA format flags: Textured, Prelit, Normals, Light, Modulate
-        flags = (rpGEOMETRYPOSITIONS | rpGEOMETRYTEXTURED | rpGEOMETRYPRELIT |
-                 rpGEOMETRYNORMALS | rpGEOMETRYLIGHT | rpGEOMETRYMODULATEMATERIALCOLOR)
-        num_uv_sets = 1
-        native_flags = 0
-        num_morph_targets = 1
+        # Format flags: Positions, Textured (1 UV set = 1 << 16), Prelit, Normals, Modulate
+        flags = (1 << 16) | rpGEOMETRYPOSITIONS | rpGEOMETRYTEXTURED | rpGEOMETRYPRELIT | rpGEOMETRYNORMALS | rpGEOMETRYMODULATEMATERIALCOLOR
 
         geom_struct_hdr = struct.pack(
-            '<HBBIII',
-            flags, num_uv_sets, native_flags, num_triangles, num_verts, num_morph_targets
+            '<IIII',
+            flags, num_triangles, num_verts, 1
         )
 
-        # Vertex colors
+        # Prelit colors (RGBA uint8)
         prelit_bytes = cols.tobytes()
 
-        # Tex coords
+        # UV coordinates (float32 pairs)
         uv_bytes = uvs.tobytes()
 
-        # Triangle array (RenderWare order: v2, v1, mat_id, v3)
+        # Triangle array (RenderWare order: v1, v0, mat_id, v2)
         tri_bytes_list = []
         for tri in tris:
             v0, v1, v2, mat_id = tri
@@ -149,20 +152,21 @@ class DFFMesh:
             r, g, b, a = mat.get('color', (255, 255, 255, 255))
             mat_struct_data = struct.pack(
                 '<IBBBBIifff',
-                0,               # flags
-                r, g, b, a,      # color
-                0x00010000,      # unused
+                0,                   # flags
+                r, g, b, a,          # color RGBA
+                0x00010000,          # unused
                 1 if has_tex else 0, # isTextured
-                1.0,             # ambient
-                1.0,             # specular
-                1.0              # diffuse
+                1.0,                 # ambient
+                0.0,                 # specular
+                1.0                  # diffuse
             )
             mat_struct_chunk = make_rw_chunk(ID_STRUCT, mat_struct_data)
 
             tex_chunk = b''
             if has_tex:
                 tex_name = mat['texture']
-                tex_struct_data = struct.pack('<BBBB', 0x02, 0x01, 0x01, 0x00) # linear, wrapU, wrapV, pad
+                # Filter 6 (LinearMipLinear), Addressing 0x11 (WrapU | WrapV)
+                tex_struct_data = b'\x06\x11\x00\x00'
                 tex_struct_chunk = make_rw_chunk(ID_STRUCT, tex_struct_data)
                 tex_name_chunk = make_string_chunk(tex_name)
                 tex_mask_chunk = make_string_chunk("")
@@ -204,7 +208,6 @@ class DFFMesh:
         geomlist_chunk = make_rw_chunk(ID_GEOMETRYLIST, geomlist_struct + geometry_chunk)
 
         # 5. FrameList Chunk (Root Frame)
-        # 9 floats rot matrix identity, 3 floats pos (0,0,0), parent -1, matrix flags
         frame_data = struct.pack(
             '<fffffffff fff iI',
             1.0, 0.0, 0.0,
@@ -219,14 +222,16 @@ class DFFMesh:
         framelist_chunk = make_rw_chunk(ID_FRAMELIST, framelist_struct + framelist_ext)
 
         # 6. Atomic Chunk
-        atomic_struct = make_rw_chunk(ID_STRUCT, struct.pack('<IIII', 0, 0, 5, 0))
+        atomic_struct_data = struct.pack('<IIII', 0, 0, 5, 0)
+        atomic_struct = make_rw_chunk(ID_STRUCT, atomic_struct_data)
         atomic_ext = make_rw_chunk(ID_EXTENSION, b'')
         atomic_chunk = make_rw_chunk(ID_ATOMIC, atomic_struct + atomic_ext)
 
         # 7. Clump Chunk (Root)
-        clump_struct = make_rw_chunk(ID_STRUCT, struct.pack('<III', 1, 0, 0)) # 1 atomic, 0 lights, 0 cameras
+        clump_struct = make_rw_chunk(ID_STRUCT, struct.pack('<III', 1, 0, 0))
         clump_ext = make_rw_chunk(ID_EXTENSION, b'')
         clump_data = clump_struct + framelist_chunk + geomlist_chunk + atomic_chunk + clump_ext
+
         return make_rw_chunk(ID_CLUMP, clump_data)
 
     def save(self, filepath):

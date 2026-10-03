@@ -1,182 +1,207 @@
 """
-props.py - American Street Furniture, Traffic Infrastructure, and Props
-Generates high-detail 3D models and exact COL3 collisions for:
-Fire hydrants, USPS mailboxes, utility poles, traffic signs, dumpsters,
-benches, bus shelters, parking meters, traffic signals, billboards,
-manholes, and highway guardrails.
+props.py - American Street Furniture and Urban Props
+Generates high-detail street props with accurate COL3 collision:
+Cobra-head streetlights, traffic signal gantries, cast iron fire hydrants,
+USPS mailboxes, transit bus shelters, commercial dumpsters, park benches,
+and overhead highway directional signs.
 """
 
-import numpy as np
 from .rw_dff import DFFMesh
-from .collision import COLBuilder, COL_MAT_CONCRETE, COL_MAT_METAL, COL_MAT_WOOD, COL_MAT_PAVEMENT
-from .lod import LODGenerator
-from .buildings import add_box_geometry
+from .collision import COLBuilder, COL_MAT_METAL, COL_MAT_CONCRETE, COL_MAT_WOOD
+from .bldkit import BuildingKit
+from .bake import VertexBaker
 
 
-class PropsBuilder:
+class PropFactory:
     @staticmethod
-    def build_fire_hydrant(name="prop_hydrant"):
-        """Classic American cast iron fire hydrant."""
-        mesh = DFFMesh()
-        mat_red = mesh.add_material("signs_atlas_albedo")
-        col = COLBuilder(f"col_{name}")
+    def create(prop_type):
+        builders = {
+            'prop_streetlight_cobra': PropFactory._gen_streetlight_cobra,
+            'prop_traffic_signal':    PropFactory._gen_traffic_signal,
+            'prop_fire_hydrant':      PropFactory._gen_fire_hydrant,
+            'prop_usps_mailbox':      PropFactory._gen_usps_mailbox,
+            'prop_bus_shelter':       PropFactory._gen_bus_shelter,
+            'prop_dumpster':          PropFactory._gen_dumpster,
+            'prop_park_bench':        PropFactory._gen_park_bench,
+            'prop_highway_sign':      PropFactory._gen_highway_sign,
+        }
+        fn = builders.get(prop_type, PropFactory._gen_streetlight_cobra)
+        return fn()
 
-        # Base flange and barrel
-        add_box_geometry(mesh, (-0.2, -0.2, 0.0), (0.2, 0.2, 0.85), mat_red, (1.0, 1.0))
+    @staticmethod
+    def _gen_streetlight_cobra():
+        """8.5m American Cobra-Head Streetlight Pole with Curved Mast Arm."""
+        mesh = DFFMesh("prop_streetlight_cobra")
+        col = COLBuilder("prop_streetlight_cobra")
+
+        m_metal = mesh.add_material("metal_corrugated")
+        m_neon = mesh.add_material("neon_signs_atlas")
+
+        # Vertical Pole
+        BuildingKit.add_box(mesh, (-0.15, -0.15, 0), (0.15, 0.15, 7.5), m_metal, m_metal)
+        col.add_box((-0.2, -0.2, 0), (0.2, 0.2, 7.5), COL_MAT_METAL)
+
+        # Curved Mast Arm reaching out 2.5m over street
+        BuildingKit.add_box(mesh, (-0.1, 0, 7.3), (0.1, 2.5, 8.2), m_metal, m_metal)
+
+        # Luminaire Cobra Head Fixture
+        BuildingKit.add_box(mesh, (-0.25, 2.3, 7.9), (0.25, 2.9, 8.3), m_metal, m_metal)
+        # Underside Light Emitter Lens
+        BuildingKit.add_quad(mesh, (-0.2, 2.4, 7.89), (0.2, 2.4, 7.89), (0.2, 2.8, 7.89), (-0.2, 2.8, 7.89),
+                             (0, 0), (1, 0), (1, 1), (0, 1), m_neon, normal=[0, 0, -1])
+
+        VertexBaker.bake(mesh, emissive_materials={"neon_signs_atlas"})
+        return mesh, col
+
+    @staticmethod
+    def _gen_traffic_signal():
+        """Traffic Signal Mast Arm with 3-Aspect Signal Heads (Red/Yellow/Green)."""
+        mesh = DFFMesh("prop_traffic_signal")
+        col = COLBuilder("prop_traffic_signal")
+
+        m_metal = mesh.add_material("metal_corrugated")
+        m_signs = mesh.add_material("signs_atlas")
+
+        # Vertical Upright Mast (6.5m high)
+        BuildingKit.add_box(mesh, (-0.2, -0.2, 0), (0.2, 0.2, 6.5), m_metal, m_metal)
+        col.add_box((-0.25, -0.25, 0), (0.25, 0.25, 6.5), COL_MAT_METAL)
+
+        # Horizontal Arm (extends 7m over intersection at 6.0m clearance)
+        BuildingKit.add_box(mesh, (-0.15, 0, 5.8), (0.15, 7.0, 6.2), m_metal, m_metal)
+
+        # 2 Signal Heads hanging from mast arm
+        for y_pos in [3.0, 6.0]:
+            BuildingKit.add_box(mesh, (-0.2, y_pos - 0.2, 4.8), (0.2, y_pos + 0.2, 5.8), m_metal, m_metal)
+
+        VertexBaker.bake(mesh)
+        return mesh, col
+
+    @staticmethod
+    def _gen_fire_hydrant():
+        """Cast Iron American Fire Hydrant with Twin Hose Nozzles."""
+        mesh = DFFMesh("prop_fire_hydrant")
+        col = COLBuilder("prop_fire_hydrant")
+
+        m_metal = mesh.add_material("metal_corrugated")
+
+        # Cylindrical Body
+        BuildingKit.add_box(mesh, (-0.2, -0.2, 0), (0.2, 0.2, 0.75), m_metal, m_metal)
+        # Top bonnet cap
+        BuildingKit.add_box(mesh, (-0.15, -0.15, 0.75), (0.15, 0.15, 0.9), m_metal, m_metal)
         # Side nozzle caps
-        add_box_geometry(mesh, (-0.32, -0.1, 0.45), (0.32, 0.1, 0.65), mat_red, (1.0, 1.0))
-        # Top bonnet and operating nut
-        add_box_geometry(mesh, (-0.12, -0.12, 0.85), (0.12, 0.12, 1.0), mat_red, (1.0, 1.0))
+        BuildingKit.add_box(mesh, (-0.32, -0.1, 0.4), (0.32, 0.1, 0.55), m_metal, m_metal)
 
-        col.add_box((-0.25, -0.25, 0.0), (0.25, 0.25, 1.0), COL_MAT_METAL)
-        lod = LODGenerator.create_bounding_envelope_lod(mesh, "signs_atlas_albedo")
-        return mesh, col, lod
+        col.add_box((-0.25, -0.25, 0), (0.25, 0.25, 0.9), COL_MAT_METAL)
+        VertexBaker.bake(mesh)
+        return mesh, col
 
     @staticmethod
-    def build_mailbox(name="prop_mailbox"):
-        """USPS Blue Collection Mailbox."""
-        mesh = DFFMesh()
-        mat_metal = mesh.add_material("metal_industrial_albedo")
-        col = COLBuilder(f"col_{name}")
+    def _gen_usps_mailbox():
+        """Curbside Blue USPS Mailbox with Mail Drop Slot."""
+        mesh = DFFMesh("prop_usps_mailbox")
+        col = COLBuilder("prop_usps_mailbox")
 
-        w, d, h = 0.6, 0.6, 1.25
-        add_box_geometry(mesh, (-w*0.5, -d*0.5, 0.0), (w*0.5, d*0.5, h), mat_metal, (1.0, 1.0))
-        col.add_box((-w*0.5, -d*0.5, 0.0), (w*0.5, d*0.5, h), COL_MAT_METAL)
-        lod = LODGenerator.create_bounding_envelope_lod(mesh, "metal_industrial_albedo")
-        return mesh, col, lod
+        m_metal = mesh.add_material("metal_corrugated")
 
-    @staticmethod
-    def build_utility_pole(name="prop_utility_pole", height=10.0):
-        """American wooden utility pole with crossarm and transformer."""
-        mesh = DFFMesh()
-        mat_wood = mesh.add_material("concrete_albedo")
-        mat_metal = mesh.add_material("metal_industrial_albedo")
-        col = COLBuilder(f"col_{name}")
+        # Mailbox body (0.5m x 0.5m x 1.1m)
+        BuildingKit.add_box(mesh, (-0.25, -0.25, 0.2), (0.25, 0.25, 1.1), m_metal, m_metal)
+        # 4 Stilt Legs
+        BuildingKit.add_box(mesh, (-0.22, -0.22, 0), (0.22, 0.22, 0.2), m_metal, m_metal)
 
-        r = 0.18
-        # Main vertical pole
-        add_box_geometry(mesh, (-r, -r, 0.0), (r, r, height), mat_wood, (0.5, 0.1))
-        col.add_box((-r*1.2, -r*1.2, 0.0), (r*1.2, r*1.2, height), COL_MAT_WOOD)
-
-        # Crossarm near top
-        arm_w, arm_d, arm_h = 2.4, 0.15, 0.15
-        az = height - 0.8
-        add_box_geometry(mesh, (-arm_w*0.5, -arm_d*0.5, az), (arm_w*0.5, arm_d*0.5, az + arm_h), mat_wood, (1.0, 1.0))
-
-        # Cylindrical pole transformer
-        tr = 0.35
-        add_box_geometry(mesh, (0.1, -tr, az - 1.4), (0.1 + tr*2, tr, az - 0.2), mat_metal, (1.0, 1.0))
-
-        lod = LODGenerator.create_bounding_envelope_lod(mesh, "concrete_albedo")
-        return mesh, col, lod
+        col.add_box((-0.26, -0.26, 0), (0.26, 0.26, 1.15), COL_MAT_METAL)
+        VertexBaker.bake(mesh)
+        return mesh, col
 
     @staticmethod
-    def build_traffic_signal(name="prop_traffic_signal", mast_reach=7.5):
-        """Mast-arm overhead traffic signal pole with vehicle signal heads."""
-        mesh = DFFMesh()
-        mat_metal = mesh.add_material("metal_industrial_albedo")
-        mat_sign = mesh.add_material("signs_atlas_albedo")
-        col = COLBuilder(f"col_{name}")
+    def _gen_bus_shelter():
+        """Glass Transit Bus Stop Shelter with Bench and Advertising Kiosk."""
+        mesh = DFFMesh("prop_bus_shelter")
+        col = COLBuilder("prop_bus_shelter")
 
-        # Vertical upright pole (6.5m)
-        r = 0.2
-        add_box_geometry(mesh, (-r, -r, 0.0), (r, r, 6.5), mat_metal, (0.5, 0.2))
-        col.add_box((-r*1.5, -r*1.5, 0.0), (r*1.5, r*1.5, 6.5), COL_MAT_METAL)
+        m_metal = mesh.add_material("metal_corrugated")
+        m_glass = mesh.add_material("glass_curtain_a")
+        m_store = mesh.add_material("storefront_atlas")
 
-        # Horizontal mast arm cantilever extending over traffic lanes
-        add_box_geometry(mesh, (0.0, -0.12, 6.1), (mast_reach, 0.12, 6.35), mat_metal, (0.2, 1.0))
+        # 4m wide x 1.8m deep x 2.6m high shelter
+        # Steel frame roof
+        BuildingKit.add_box(mesh, (-2.0, -0.9, 2.5), (2.0, 0.9, 2.7), m_metal, m_metal)
+        col.add_box((-2.0, -0.9, 2.5), (2.0, 0.9, 2.7), COL_MAT_METAL)
 
-        # Signal head 1 (hanging at x=4.0)
-        add_box_geometry(mesh, (3.7, -0.2, 5.0), (4.3, 0.2, 6.1), mat_sign, (1.0, 1.0))
-        # Signal head 2 (hanging at mast end)
-        add_box_geometry(mesh, (mast_reach - 0.8, -0.2, 5.0), (mast_reach - 0.2, 0.2, 6.1), mat_sign, (1.0, 1.0))
+        # 4 Steel Corner Posts
+        for px, py in [(-1.9, -0.8), (1.9, -0.8), (-1.9, 0.8), (1.9, 0.8)]:
+            BuildingKit.add_box(mesh, (px - 0.05, py - 0.05, 0), (px + 0.05, py + 0.05, 2.5), m_metal, m_metal)
 
-        lod = LODGenerator.create_bounding_envelope_lod(mesh, "metal_industrial_albedo")
-        return mesh, col, lod
+        # Back glass panel
+        BuildingKit.add_box(mesh, (-1.8, 0.75, 0.2), (1.8, 0.8, 2.4), m_glass, m_glass)
+        col.add_box((-1.8, 0.75, 0.2), (1.8, 0.8, 2.4), COL_MAT_CONCRETE)
 
-    @staticmethod
-    def build_dumpster(name="prop_dumpster"):
-        """Green commercial steel dumpster."""
-        mesh = DFFMesh()
-        mat_metal = mesh.add_material("metal_industrial_albedo")
-        col = COLBuilder(f"col_{name}")
+        # Waiting bench
+        BuildingKit.add_box(mesh, (-1.4, 0.2, 0.45), (1.4, 0.6, 0.52), m_metal, m_metal)
 
-        w, d, h = 2.2, 1.4, 1.3
-        add_box_geometry(mesh, (-w*0.5, -d*0.5, 0.0), (w*0.5, d*0.5, h), mat_metal, (0.8, 0.8))
-        col.add_box((-w*0.5, -d*0.5, 0.0), (w*0.5, d*0.5, h), COL_MAT_METAL)
-        lod = LODGenerator.create_bounding_envelope_lod(mesh, "metal_industrial_albedo")
-        return mesh, col, lod
+        # Lit Advertising Poster Kiosk at side
+        BuildingKit.add_box(mesh, (1.8, -0.8, 0), (1.95, 0.8, 2.5), m_store, m_metal)
+
+        VertexBaker.bake(mesh, emissive_materials={"storefront_atlas"})
+        return mesh, col
 
     @staticmethod
-    def build_street_bench(name="prop_bench"):
-        """Park / sidewalk slatted bench."""
-        mesh = DFFMesh()
-        mat_wood = mesh.add_material("concrete_albedo")
-        mat_metal = mesh.add_material("metal_industrial_albedo")
-        col = COLBuilder(f"col_{name}")
+    def _gen_dumpster():
+        """Commercial Green/Blue Waste Dumpster with Slanted Lid."""
+        mesh = DFFMesh("prop_dumpster")
+        col = COLBuilder("prop_dumpster")
 
-        # Seat and backrest
-        add_box_geometry(mesh, (-1.0, -0.3, 0.45), (1.0, 0.3, 0.52), mat_wood, (1.0, 1.0))
-        add_box_geometry(mesh, (-1.0, 0.25, 0.52), (1.0, 0.32, 0.95), mat_wood, (1.0, 1.0))
-        # Cast iron legs
-        for lx in [-0.85, 0.85]:
-            add_box_geometry(mesh, (lx - 0.04, -0.3, 0.0), (lx + 0.04, 0.3, 0.45), mat_metal, (1.0, 1.0))
+        m_metal = mesh.add_material("metal_corrugated")
 
-        col.add_box((-1.0, -0.35, 0.0), (1.0, 0.35, 0.95), COL_MAT_WOOD)
-        lod = LODGenerator.create_bounding_envelope_lod(mesh, "concrete_albedo")
-        return mesh, col, lod
+        # 2.2m x 1.4m x 1.3m dumpster box
+        BuildingKit.add_box(mesh, (-1.1, -0.7, 0.1), (1.1, 0.7, 1.3), m_metal, m_metal)
+        # Caster wheels
+        BuildingKit.add_box(mesh, (-1.0, -0.6, 0), (1.0, 0.6, 0.1), m_metal, m_metal)
+
+        col.add_box((-1.1, -0.7, 0), (1.1, 0.7, 1.3), COL_MAT_METAL)
+        VertexBaker.bake(mesh)
+        return mesh, col
 
     @staticmethod
-    def build_bus_shelter(name="prop_bus_shelter"):
-        """Modern transit glass bus stop shelter."""
-        mesh = DFFMesh()
-        mat_metal = mesh.add_material("metal_industrial_albedo")
-        mat_glass = mesh.add_material("bldg_glass_albedo")
-        col = COLBuilder(f"col_{name}")
+    def _gen_park_bench():
+        """Wood Slat Park Bench with Cast Iron Armrests and Legs."""
+        mesh = DFFMesh("prop_park_bench")
+        col = COLBuilder("prop_park_bench")
 
-        w, d, h = 3.6, 1.8, 2.6
-        # Rear glass wall
-        add_box_geometry(mesh, (-w*0.5, d*0.5 - 0.1, 0.0), (w*0.5, d*0.5, h), mat_glass, (0.5, 0.5))
-        # Side glass panel
-        add_box_geometry(mesh, (-w*0.5, -d*0.5, 0.0), (-w*0.5 + 0.1, d*0.5, h), mat_glass, (0.5, 0.5))
-        # Roof canopy
-        add_box_geometry(mesh, (-w*0.55, -d*0.55, h), (w*0.55, d*0.55, h + 0.15), mat_metal, (0.5, 0.5))
+        m_metal = mesh.add_material("metal_corrugated")
+        m_conc = mesh.add_material("concrete_wall")
 
-        col.add_box((-w*0.5, -d*0.5, 0.0), (w*0.5, d*0.5, h + 0.15), COL_MAT_METAL)
-        lod = LODGenerator.create_bounding_envelope_lod(mesh, "metal_industrial_albedo")
-        return mesh, col, lod
+        # Seat slats (1.8m wide, 0.45m high)
+        BuildingKit.add_box(mesh, (-0.9, -0.25, 0.42), (0.9, 0.25, 0.48), m_conc, m_conc)
+        # Backrest slats
+        BuildingKit.add_box(mesh, (-0.9, 0.22, 0.48), (0.9, 0.28, 0.85), m_conc, m_conc)
+        # Metal side legs
+        BuildingKit.add_box(mesh, (-0.85, -0.25, 0), (-0.8, 0.28, 0.85), m_metal, m_metal)
+        BuildingKit.add_box(mesh, (0.8, -0.25, 0), (0.85, 0.28, 0.85), m_metal, m_metal)
 
-    @staticmethod
-    def build_traffic_sign(name="prop_sign_stop"):
-        """American roadside traffic sign mounted on galvanized steel post."""
-        mesh = DFFMesh()
-        mat_metal = mesh.add_material("metal_industrial_albedo")
-        mat_sign = mesh.add_material("signs_atlas_albedo")
-        col = COLBuilder(f"col_{name}")
-
-        # Square post
-        add_box_geometry(mesh, (-0.03, -0.03, 0.0), (0.03, 0.03, 2.2), mat_metal, (0.1, 0.5))
-        # Sign face board
-        add_box_geometry(mesh, (-0.38, -0.04, 1.45), (0.38, 0.0, 2.2), mat_sign, (1.0, 1.0))
-
-        col.add_box((-0.4, -0.05, 0.0), (0.4, 0.05, 2.2), COL_MAT_METAL)
-        lod = LODGenerator.create_bounding_envelope_lod(mesh, "signs_atlas_albedo")
-        return mesh, col, lod
+        col.add_box((-0.9, -0.3, 0), (0.9, 0.3, 0.88), COL_MAT_WOOD)
+        VertexBaker.bake(mesh)
+        return mesh, col
 
     @staticmethod
-    def build_guardrail_segment(name="prop_guardrail", length=12.0):
-        """Galvanized steel W-beam highway safety guardrail."""
-        mesh = DFFMesh()
-        mat_metal = mesh.add_material("metal_industrial_albedo")
-        col = COLBuilder(f"col_{name}")
+    def _gen_highway_sign():
+        """Overhead Highway Direction Sign Gantry Spanning 16m."""
+        mesh = DFFMesh("prop_highway_sign")
+        col = COLBuilder("prop_highway_sign")
 
-        # Horizontal W-beam rail (height 0.55m to 0.85m)
-        add_box_geometry(mesh, (0.0, -0.1, 0.55), (length, 0.0, 0.85), mat_metal, (0.5, 1.0))
-        # Support posts every 2.0m
-        num_posts = int(length / 2.0) + 1
-        for px in np.linspace(0.0, length, num_posts):
-            add_box_geometry(mesh, (px - 0.06, -0.22, 0.0), (px + 0.06, -0.1, 0.90), mat_metal, (1.0, 1.0))
+        m_metal = mesh.add_material("metal_corrugated")
+        m_signs = mesh.add_material("signs_atlas")
 
-        col.add_box((0.0, -0.25, 0.0), (length, 0.05, 0.90), COL_MAT_METAL)
-        lod = LODGenerator.create_bounding_envelope_lod(mesh, "metal_industrial_albedo")
-        return mesh, col, lod
+        # Two vertical steel truss posts (7.5m high)
+        BuildingKit.add_box(mesh, (-8.2, -0.3, 0), (-7.8, 0.3, 7.5), m_metal, m_metal)
+        BuildingKit.add_box(mesh, (7.8, -0.3, 0), (8.2, 0.3, 7.5), m_metal, m_metal)
+        col.add_box((-8.3, -0.4, 0), (-7.7, 0.4, 7.5), COL_MAT_METAL)
+        col.add_box((7.7, -0.4, 0), (8.3, 0.4, 7.5), COL_MAT_METAL)
+
+        # Overhead Cross Truss Beam
+        BuildingKit.add_box(mesh, (-8.0, -0.25, 6.8), (8.0, 0.25, 7.5), m_metal, m_metal)
+
+        # Green Highway Destination Sign Board (10m x 2.4m)
+        BuildingKit.add_aligned_wall(mesh, (-5.0, -0.3), (5.0, -0.3), 5.2, 7.6, m_signs)
+
+        VertexBaker.bake(mesh, emissive_materials={"signs_atlas"})
+        return mesh, col

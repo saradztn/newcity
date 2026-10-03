@@ -2,6 +2,7 @@
     streaming.lua - Dynamic Cell-Based Asset & Object Streaming Engine
     Loads DFF, LOD DFF, and COL files into allocated model IDs, imports TXD,
     creates world objects, links LOD elements via setLowLODElement, and manages distance culling.
+    Guarantees player safety by freezing briefly during stream-in.
 ]]
 
 Streaming = {}
@@ -30,7 +31,7 @@ function Streaming.Init()
         return false
     end
 
-    local lodMult = Config.CurrentPreset.lodDistanceMultiplier or 1.0
+    local lodMult = (Config and Config.CurrentPreset and Config.CurrentPreset.lodDistanceMultiplier) or 1.0
 
     -- 1. Load TXD Texture Dictionary
     if fileExists("textures/city_textures.txd") then
@@ -58,7 +59,7 @@ function Streaming.Init()
         end
 
         if modelId and lodModelId then
-            -- A. Import TXD FIRST (Crucial for GTA SA RenderWare texture assignment)
+            -- A. Import TXD FIRST to both model and LOD model (Crucial for GTA SA RenderWare)
             if Streaming.TXD then
                 engineImportTXD(Streaming.TXD, modelId)
                 engineImportTXD(Streaming.TXD, lodModelId)
@@ -89,8 +90,8 @@ function Streaming.Init()
             end
 
             -- E. Configure draw distances
-            local nearDist = (mInfo.lod_distance or 220.0) * lodMult
-            local farDist = (mInfo.far_lod_distance or 1600.0) * lodMult
+            local nearDist = (mInfo.lod_distance or 300.0) * lodMult
+            local farDist = (mInfo.far_lod_distance or 1800.0) * lodMult
             engineSetModelLODDistance(modelId, nearDist)
             engineSetModelLODDistance(lodModelId, farDist)
 
