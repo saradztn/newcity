@@ -38,9 +38,11 @@ Use `/citytp` in-game to teleport directly to the city center.
 - **Flawless Texture & Rendering Pipeline (Eliminating White Models)**:
   - **Direct3D 9 TXD Binary Conformance**:
     - `deviceId = 9` (D3D9 PC).
-    - Exact 88-byte `RpRasterPC_Header`: `rasterFormat = 0x0280` (`RASTER_565 | RASTER_MIPMAP`) for DXT1, `0x0480` (`RASTER_4444 | RASTER_MIPMAP`) for DXT5.
+    - Exact 88-byte `RpRasterPC_Header`: `rasterFormat = 0x8200` (`RASTER_565 | RASTER_MIPMAP`) for DXT1, `0x8100` (`RASTER_1555 | RASTER_MIPMAP`) for 1-bit alpha punchthrough.
     - `filter_and_addressing = 0x1106` (linear-mip-linear with wrap/wrap).
-    - Full 10-level mipmap chains down to 1x1.
+    - Full 10-level mipmap chains down to 1x1 with exact D3D sub-4px block sizing (8 bytes for 2x2 and 1x1).
+    - Texture names strictly <= 23 characters (padded with null bytes to 32 bytes).
+    - Modular TXD dictionaries (`city_ground.txd`, `city_bld.txd`, `city_infra.txd`) alongside master `city_textures.txd` to prevent single-dictionary memory allocation caps.
   - **RenderWare 3.6 DFF Binary Conformance**:
     - `flags = (1 << 16) | FLAG_POSITIONS | FLAG_TEXTURED | FLAG_PRELIT | FLAG_NORMALS | FLAG_MODULATE`.
     - CCW triangle winding: `(v1, v0, mat_id, v2)`.
@@ -50,7 +52,7 @@ Use `/citytp` in-game to teleport directly to the city center.
     - Computes cool skylight ambient, street canyon height falloff, emissive window/sign surfaces, and local point light falloffs from streetlamps onto street/curb/sidewalk vertices.
   - **Dual Texture Delivery in Resource**:
     - Both `.dds` and `.png` textures are packaged in `resource/textures/`.
-    - Universal fallback diffuse shader binds all world textures via `engineApplyShaderToWorldTexture`.
+    - Paired Vertex & Pixel Shaders in `tex_diffuse.fx` guarantee immediate texture projection via `engineApplyShaderToWorldTexture`.
 
 - **DirectX 9 Graphics Engine (HLSL Shaders)**:
   - Compact SM 2.0 fallback passes (< 35 instructions) and full SM 3.0 passes to prevent instruction slot limit errors (`ps_2_0` max 64 instructions).
