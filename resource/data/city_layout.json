@@ -1,0 +1,1933 @@
+{
+  "models": {
+    "terrain_sw": {
+      "id": 1337,
+      "name": "terrain_sw",
+      "category": "terrain",
+      "dff": "models/terrain_sw.dff",
+      "lod_dff": "models/terrain_sw_lod.dff",
+      "col": "collisions/terrain_sw.col",
+      "lod_distance": 300.0,
+      "far_lod_distance": 2500.0
+    },
+    "terrain_se": {
+      "id": 1338,
+      "name": "terrain_se",
+      "category": "terrain",
+      "dff": "models/terrain_se.dff",
+      "lod_dff": "models/terrain_se_lod.dff",
+      "col": "collisions/terrain_se.col",
+      "lod_distance": 300.0,
+      "far_lod_distance": 2500.0
+    },
+    "terrain_nw": {
+      "id": 1339,
+      "name": "terrain_nw",
+      "category": "terrain",
+      "dff": "models/terrain_nw.dff",
+      "lod_dff": "models/terrain_nw_lod.dff",
+      "col": "collisions/terrain_nw.col",
+      "lod_distance": 300.0,
+      "far_lod_distance": 2500.0
+    },
+    "terrain_ne": {
+      "id": 1340,
+      "name": "terrain_ne",
+      "category": "terrain",
+      "dff": "models/terrain_ne.dff",
+      "lod_dff": "models/terrain_ne_lod.dff",
+      "col": "collisions/terrain_ne.col",
+      "lod_distance": 300.0,
+      "far_lod_distance": 2500.0
+    },
+    "rd_downtown_bvd_s": {
+      "id": 1341,
+      "name": "rd_downtown_bvd_s",
+      "category": "road",
+      "dff": "models/rd_downtown_bvd_s.dff",
+      "lod_dff": "models/rd_downtown_bvd_s_lod.dff",
+      "col": "collisions/rd_downtown_bvd_s.col",
+      "lod_distance": 250.0,
+      "far_lod_distance": 1800.0
+    },
+    "rd_downtown_bvd_n": {
+      "id": 1342,
+      "name": "rd_downtown_bvd_n",
+      "category": "road",
+      "dff": "models/rd_downtown_bvd_n.dff",
+      "lod_dff": "models/rd_downtown_bvd_n_lod.dff",
+      "col": "collisions/rd_downtown_bvd_n.col",
+      "lod_distance": 250.0,
+      "far_lod_distance": 1800.0
+    },
+    "rd_commercial_ave": {
+      "id": 1343,
+      "name": "rd_commercial_ave",
+      "category": "road",
+      "dff": "models/rd_commercial_ave.dff",
+      "lod_dff": "models/rd_commercial_ave_lod.dff",
+      "col": "collisions/rd_commercial_ave.col",
+      "lod_distance": 250.0,
+      "far_lod_distance": 1800.0
+    },
+    "rd_coastal_drive": {
+      "id": 1344,
+      "name": "rd_coastal_drive",
+      "category": "road",
+      "dff": "models/rd_coastal_drive.dff",
+      "lod_dff": "models/rd_coastal_drive_lod.dff",
+      "col": "collisions/rd_coastal_drive.col",
+      "lod_distance": 250.0,
+      "far_lod_distance": 1800.0
+    },
+    "rd_suburbs_climb": {
+      "id": 1345,
+      "name": "rd_suburbs_climb",
+      "category": "road",
+      "dff": "models/rd_suburbs_climb.dff",
+      "lod_dff": "models/rd_suburbs_climb_lod.dff",
+      "col": "collisions/rd_suburbs_climb.col",
+      "lod_distance": 250.0,
+      "far_lod_distance": 1800.0
+    },
+    "int_downtown_main": {
+      "id": 1346,
+      "name": "int_downtown_main",
+      "category": "intersection",
+      "dff": "models/int_downtown_main.dff",
+      "lod_dff": "models/int_downtown_main_lod.dff",
+      "col": "collisions/int_downtown_main.col",
+      "lod_distance": 200.0,
+      "far_lod_distance": 1500.0
+    },
+    "roundabout_suburbs": {
+      "id": 1347,
+      "name": "roundabout_suburbs",
+      "category": "intersection",
+      "dff": "models/roundabout_suburbs.dff",
+      "lod_dff": "models/roundabout_suburbs_lod.dff",
+      "col": "collisions/roundabout_suburbs.col",
+      "lod_distance": 200.0,
+      "far_lod_distance": 1500.0
+    },
+    "hw_elevated_span": {
+      "id": 1348,
+      "name": "hw_elevated_span",
+      "category": "highway",
+      "dff": "models/hw_elevated_span.dff",
+      "lod_dff": "models/hw_elevated_span_lod.dff",
+      "col": "collisions/hw_elevated_span.col",
+      "lod_distance": 280.0,
+      "far_lod_distance": 2000.0
+    },
+    "hw_exit_ramp": {
+      "id": 1349,
+      "name": "hw_exit_ramp",
+      "category": "highway",
+      "dff": "models/hw_exit_ramp.dff",
+      "lod_dff": "models/hw_exit_ramp_lod.dff",
+      "col": "collisions/hw_exit_ramp.col",
+      "lod_distance": 250.0,
+      "far_lod_distance": 1800.0
+    },
+    "bridge_bayside_viaduct": {
+      "id": 1350,
+      "name": "bridge_bayside_viaduct",
+      "category": "bridge",
+      "dff": "models/bridge_bayside_viaduct.dff",
+      "lod_dff": "models/bridge_bayside_viaduct_lod.dff",
+      "col": "collisions/bridge_bayside_viaduct.col",
+      "lod_distance": 300.0,
+      "far_lod_distance": 2200.0
+    },
+    "tunnel_heights_portal": {
+      "id": 1351,
+      "name": "tunnel_heights_portal",
+      "category": "tunnel",
+      "dff": "models/tunnel_heights_portal.dff",
+      "lod_dff": "models/tunnel_heights_portal_lod.dff",
+      "col": "collisions/tunnel_heights_portal.col",
+      "lod_distance": 200.0,
+      "far_lod_distance": 1500.0
+    },
+    "bldg_modern_tower": {
+      "id": 1352,
+      "name": "bldg_modern_tower",
+      "category": "building",
+      "dff": "models/bldg_modern_tower.dff",
+      "lod_dff": "models/bldg_modern_tower_lod.dff",
+      "col": "collisions/bldg_modern_tower.col",
+      "lod_distance": 200.0,
+      "far_lod_distance": 1600.0
+    },
+    "bldg_glass_tower": {
+      "id": 1353,
+      "name": "bldg_glass_tower",
+      "category": "building",
+      "dff": "models/bldg_glass_tower.dff",
+      "lod_dff": "models/bldg_glass_tower_lod.dff",
+      "col": "collisions/bldg_glass_tower.col",
+      "lod_distance": 200.0,
+      "far_lod_distance": 1600.0
+    },
+    "bldg_office_tower": {
+      "id": 1354,
+      "name": "bldg_office_tower",
+      "category": "building",
+      "dff": "models/bldg_office_tower.dff",
+      "lod_dff": "models/bldg_office_tower_lod.dff",
+      "col": "collisions/bldg_office_tower.col",
+      "lod_distance": 200.0,
+      "far_lod_distance": 1600.0
+    },
+    "bldg_residential_tower": {
+      "id": 1355,
+      "name": "bldg_residential_tower",
+      "category": "building",
+      "dff": "models/bldg_residential_tower.dff",
+      "lod_dff": "models/bldg_residential_tower_lod.dff",
+      "col": "collisions/bldg_residential_tower.col",
+      "lod_distance": 200.0,
+      "far_lod_distance": 1600.0
+    },
+    "bldg_luxury_apartment": {
+      "id": 1356,
+      "name": "bldg_luxury_apartment",
+      "category": "building",
+      "dff": "models/bldg_luxury_apartment.dff",
+      "lod_dff": "models/bldg_luxury_apartment_lod.dff",
+      "col": "collisions/bldg_luxury_apartment.col",
+      "lod_distance": 200.0,
+      "far_lod_distance": 1600.0
+    },
+    "bldg_suburban_house": {
+      "id": 1357,
+      "name": "bldg_suburban_house",
+      "category": "building",
+      "dff": "models/bldg_suburban_house.dff",
+      "lod_dff": "models/bldg_suburban_house_lod.dff",
+      "col": "collisions/bldg_suburban_house.col",
+      "lod_distance": 200.0,
+      "far_lod_distance": 1600.0
+    },
+    "bldg_townhouse": {
+      "id": 1358,
+      "name": "bldg_townhouse",
+      "category": "building",
+      "dff": "models/bldg_townhouse.dff",
+      "lod_dff": "models/bldg_townhouse_lod.dff",
+      "col": "collisions/bldg_townhouse.col",
+      "lod_distance": 200.0,
+      "far_lod_distance": 1600.0
+    },
+    "bldg_motel": {
+      "id": 1359,
+      "name": "bldg_motel",
+      "category": "building",
+      "dff": "models/bldg_motel.dff",
+      "lod_dff": "models/bldg_motel_lod.dff",
+      "col": "collisions/bldg_motel.col",
+      "lod_distance": 200.0,
+      "far_lod_distance": 1600.0
+    },
+    "bldg_hotel": {
+      "id": 1360,
+      "name": "bldg_hotel",
+      "category": "building",
+      "dff": "models/bldg_hotel.dff",
+      "lod_dff": "models/bldg_hotel_lod.dff",
+      "col": "collisions/bldg_hotel.col",
+      "lod_distance": 200.0,
+      "far_lod_distance": 1600.0
+    },
+    "bldg_shopping_center": {
+      "id": 1361,
+      "name": "bldg_shopping_center",
+      "category": "building",
+      "dff": "models/bldg_shopping_center.dff",
+      "lod_dff": "models/bldg_shopping_center_lod.dff",
+      "col": "collisions/bldg_shopping_center.col",
+      "lod_distance": 200.0,
+      "far_lod_distance": 1600.0
+    },
+    "bldg_strip_mall": {
+      "id": 1362,
+      "name": "bldg_strip_mall",
+      "category": "building",
+      "dff": "models/bldg_strip_mall.dff",
+      "lod_dff": "models/bldg_strip_mall_lod.dff",
+      "col": "collisions/bldg_strip_mall.col",
+      "lod_distance": 200.0,
+      "far_lod_distance": 1600.0
+    },
+    "bldg_restaurant": {
+      "id": 1363,
+      "name": "bldg_restaurant",
+      "category": "building",
+      "dff": "models/bldg_restaurant.dff",
+      "lod_dff": "models/bldg_restaurant_lod.dff",
+      "col": "collisions/bldg_restaurant.col",
+      "lod_distance": 200.0,
+      "far_lod_distance": 1600.0
+    },
+    "bldg_diner": {
+      "id": 1364,
+      "name": "bldg_diner",
+      "category": "building",
+      "dff": "models/bldg_diner.dff",
+      "lod_dff": "models/bldg_diner_lod.dff",
+      "col": "collisions/bldg_diner.col",
+      "lod_distance": 200.0,
+      "far_lod_distance": 1600.0
+    },
+    "bldg_gas_station": {
+      "id": 1365,
+      "name": "bldg_gas_station",
+      "category": "building",
+      "dff": "models/bldg_gas_station.dff",
+      "lod_dff": "models/bldg_gas_station_lod.dff",
+      "col": "collisions/bldg_gas_station.col",
+      "lod_distance": 200.0,
+      "far_lod_distance": 1600.0
+    },
+    "bldg_warehouse": {
+      "id": 1366,
+      "name": "bldg_warehouse",
+      "category": "building",
+      "dff": "models/bldg_warehouse.dff",
+      "lod_dff": "models/bldg_warehouse_lod.dff",
+      "col": "collisions/bldg_warehouse.col",
+      "lod_distance": 200.0,
+      "far_lod_distance": 1600.0
+    },
+    "bldg_factory": {
+      "id": 1367,
+      "name": "bldg_factory",
+      "category": "building",
+      "dff": "models/bldg_factory.dff",
+      "lod_dff": "models/bldg_factory_lod.dff",
+      "col": "collisions/bldg_factory.col",
+      "lod_distance": 200.0,
+      "far_lod_distance": 1600.0
+    },
+    "bldg_hospital": {
+      "id": 1368,
+      "name": "bldg_hospital",
+      "category": "building",
+      "dff": "models/bldg_hospital.dff",
+      "lod_dff": "models/bldg_hospital_lod.dff",
+      "col": "collisions/bldg_hospital.col",
+      "lod_distance": 200.0,
+      "far_lod_distance": 1600.0
+    },
+    "bldg_school": {
+      "id": 1369,
+      "name": "bldg_school",
+      "category": "building",
+      "dff": "models/bldg_school.dff",
+      "lod_dff": "models/bldg_school_lod.dff",
+      "col": "collisions/bldg_school.col",
+      "lod_distance": 200.0,
+      "far_lod_distance": 1600.0
+    },
+    "bldg_police_station": {
+      "id": 1370,
+      "name": "bldg_police_station",
+      "category": "building",
+      "dff": "models/bldg_police_station.dff",
+      "lod_dff": "models/bldg_police_station_lod.dff",
+      "col": "collisions/bldg_police_station.col",
+      "lod_distance": 200.0,
+      "far_lod_distance": 1600.0
+    },
+    "bldg_fire_station": {
+      "id": 1371,
+      "name": "bldg_fire_station",
+      "category": "building",
+      "dff": "models/bldg_fire_station.dff",
+      "lod_dff": "models/bldg_fire_station_lod.dff",
+      "col": "collisions/bldg_fire_station.col",
+      "lod_distance": 200.0,
+      "far_lod_distance": 1600.0
+    },
+    "bldg_parking_garage": {
+      "id": 1372,
+      "name": "bldg_parking_garage",
+      "category": "building",
+      "dff": "models/bldg_parking_garage.dff",
+      "lod_dff": "models/bldg_parking_garage_lod.dff",
+      "col": "collisions/bldg_parking_garage.col",
+      "lod_distance": 200.0,
+      "far_lod_distance": 1600.0
+    },
+    "bldg_industrial_building": {
+      "id": 1373,
+      "name": "bldg_industrial_building",
+      "category": "building",
+      "dff": "models/bldg_industrial_building.dff",
+      "lod_dff": "models/bldg_industrial_building_lod.dff",
+      "col": "collisions/bldg_industrial_building.col",
+      "lod_distance": 200.0,
+      "far_lod_distance": 1600.0
+    },
+    "bldg_small_commercial_building": {
+      "id": 1374,
+      "name": "bldg_small_commercial_building",
+      "category": "building",
+      "dff": "models/bldg_small_commercial_building.dff",
+      "lod_dff": "models/bldg_small_commercial_building_lod.dff",
+      "col": "collisions/bldg_small_commercial_building.col",
+      "lod_distance": 200.0,
+      "far_lod_distance": 1600.0
+    },
+    "prop_hydrant": {
+      "id": 1375,
+      "name": "prop_hydrant",
+      "category": "prop",
+      "dff": "models/prop_hydrant.dff",
+      "lod_dff": "models/prop_hydrant_lod.dff",
+      "col": "collisions/prop_hydrant.col",
+      "lod_distance": 120.0,
+      "far_lod_distance": 800.0
+    },
+    "prop_mailbox": {
+      "id": 1376,
+      "name": "prop_mailbox",
+      "category": "prop",
+      "dff": "models/prop_mailbox.dff",
+      "lod_dff": "models/prop_mailbox_lod.dff",
+      "col": "collisions/prop_mailbox.col",
+      "lod_distance": 120.0,
+      "far_lod_distance": 800.0
+    },
+    "prop_utility_pole": {
+      "id": 1377,
+      "name": "prop_utility_pole",
+      "category": "prop",
+      "dff": "models/prop_utility_pole.dff",
+      "lod_dff": "models/prop_utility_pole_lod.dff",
+      "col": "collisions/prop_utility_pole.col",
+      "lod_distance": 120.0,
+      "far_lod_distance": 800.0
+    },
+    "prop_traffic_signal": {
+      "id": 1378,
+      "name": "prop_traffic_signal",
+      "category": "prop",
+      "dff": "models/prop_traffic_signal.dff",
+      "lod_dff": "models/prop_traffic_signal_lod.dff",
+      "col": "collisions/prop_traffic_signal.col",
+      "lod_distance": 120.0,
+      "far_lod_distance": 800.0
+    },
+    "prop_dumpster": {
+      "id": 1379,
+      "name": "prop_dumpster",
+      "category": "prop",
+      "dff": "models/prop_dumpster.dff",
+      "lod_dff": "models/prop_dumpster_lod.dff",
+      "col": "collisions/prop_dumpster.col",
+      "lod_distance": 120.0,
+      "far_lod_distance": 800.0
+    },
+    "prop_bench": {
+      "id": 1380,
+      "name": "prop_bench",
+      "category": "prop",
+      "dff": "models/prop_bench.dff",
+      "lod_dff": "models/prop_bench_lod.dff",
+      "col": "collisions/prop_bench.col",
+      "lod_distance": 120.0,
+      "far_lod_distance": 800.0
+    },
+    "prop_bus_shelter": {
+      "id": 1381,
+      "name": "prop_bus_shelter",
+      "category": "prop",
+      "dff": "models/prop_bus_shelter.dff",
+      "lod_dff": "models/prop_bus_shelter_lod.dff",
+      "col": "collisions/prop_bus_shelter.col",
+      "lod_distance": 120.0,
+      "far_lod_distance": 800.0
+    },
+    "prop_traffic_sign": {
+      "id": 1382,
+      "name": "prop_traffic_sign",
+      "category": "prop",
+      "dff": "models/prop_traffic_sign.dff",
+      "lod_dff": "models/prop_traffic_sign_lod.dff",
+      "col": "collisions/prop_traffic_sign.col",
+      "lod_distance": 120.0,
+      "far_lod_distance": 800.0
+    },
+    "prop_guardrail": {
+      "id": 1383,
+      "name": "prop_guardrail",
+      "category": "prop",
+      "dff": "models/prop_guardrail.dff",
+      "lod_dff": "models/prop_guardrail_lod.dff",
+      "col": "collisions/prop_guardrail.col",
+      "lod_distance": 120.0,
+      "far_lod_distance": 800.0
+    },
+    "veg_palm_tree": {
+      "id": 1384,
+      "name": "veg_palm_tree",
+      "category": "vegetation",
+      "dff": "models/veg_palm_tree.dff",
+      "lod_dff": "models/veg_palm_tree_lod.dff",
+      "col": "collisions/veg_palm_tree.col",
+      "lod_distance": 150.0,
+      "far_lod_distance": 1000.0
+    },
+    "veg_oak_tree": {
+      "id": 1385,
+      "name": "veg_oak_tree",
+      "category": "vegetation",
+      "dff": "models/veg_oak_tree.dff",
+      "lod_dff": "models/veg_oak_tree_lod.dff",
+      "col": "collisions/veg_oak_tree.col",
+      "lod_distance": 150.0,
+      "far_lod_distance": 1000.0
+    },
+    "veg_pine_tree": {
+      "id": 1386,
+      "name": "veg_pine_tree",
+      "category": "vegetation",
+      "dff": "models/veg_pine_tree.dff",
+      "lod_dff": "models/veg_pine_tree_lod.dff",
+      "col": "collisions/veg_pine_tree.col",
+      "lod_distance": 150.0,
+      "far_lod_distance": 1000.0
+    },
+    "veg_shrub": {
+      "id": 1387,
+      "name": "veg_shrub",
+      "category": "vegetation",
+      "dff": "models/veg_shrub.dff",
+      "lod_dff": "models/veg_shrub_lod.dff",
+      "col": "collisions/veg_shrub.col",
+      "lod_distance": 150.0,
+      "far_lod_distance": 1000.0
+    },
+    "infra_streetlight_cobra": {
+      "id": 1388,
+      "name": "infra_streetlight_cobra",
+      "category": "infrastructure",
+      "dff": "models/infra_streetlight_cobra.dff",
+      "lod_dff": "models/infra_streetlight_cobra_lod.dff",
+      "col": "collisions/infra_streetlight_cobra.col",
+      "lod_distance": 180.0,
+      "far_lod_distance": 1200.0
+    },
+    "infra_power_tower": {
+      "id": 1389,
+      "name": "infra_power_tower",
+      "category": "infrastructure",
+      "dff": "models/infra_power_tower.dff",
+      "lod_dff": "models/infra_power_tower_lod.dff",
+      "col": "collisions/infra_power_tower.col",
+      "lod_distance": 180.0,
+      "far_lod_distance": 1200.0
+    }
+  },
+  "instances": [
+    {
+      "model": "terrain_sw",
+      "pos": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": 1.0,
+      "district": "terrain"
+    },
+    {
+      "model": "terrain_se",
+      "pos": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": 1.0,
+      "district": "terrain"
+    },
+    {
+      "model": "terrain_nw",
+      "pos": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": 1.0,
+      "district": "terrain"
+    },
+    {
+      "model": "terrain_ne",
+      "pos": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": 1.0,
+      "district": "terrain"
+    },
+    {
+      "model": "rd_downtown_bvd_s",
+      "pos": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": 1.0,
+      "district": "road"
+    },
+    {
+      "model": "rd_downtown_bvd_n",
+      "pos": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": 1.0,
+      "district": "road"
+    },
+    {
+      "model": "rd_commercial_ave",
+      "pos": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": 1.0,
+      "district": "road"
+    },
+    {
+      "model": "rd_coastal_drive",
+      "pos": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": 1.0,
+      "district": "road"
+    },
+    {
+      "model": "rd_suburbs_climb",
+      "pos": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": 1.0,
+      "district": "road"
+    },
+    {
+      "model": "int_downtown_main",
+      "pos": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": 1.0,
+      "district": "downtown"
+    },
+    {
+      "model": "roundabout_suburbs",
+      "pos": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": 1.0,
+      "district": "residential"
+    },
+    {
+      "model": "hw_elevated_span",
+      "pos": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": 1.0,
+      "district": "highway"
+    },
+    {
+      "model": "hw_exit_ramp",
+      "pos": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": 1.0,
+      "district": "highway"
+    },
+    {
+      "model": "bridge_bayside_viaduct",
+      "pos": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": 1.0,
+      "district": "coastal"
+    },
+    {
+      "model": "tunnel_heights_portal",
+      "pos": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": 1.0,
+      "district": "hills"
+    },
+    {
+      "model": "bldg_modern_tower",
+      "pos": [
+        45.0,
+        45.0,
+        4.6
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": 1.0,
+      "district": "downtown"
+    },
+    {
+      "model": "bldg_glass_tower",
+      "pos": [
+        -45.0,
+        45.0,
+        4.6
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        90.0
+      ],
+      "scale": 1.0,
+      "district": "downtown"
+    },
+    {
+      "model": "bldg_office_tower",
+      "pos": [
+        45.0,
+        -45.0,
+        4.5
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        180.0
+      ],
+      "scale": 1.0,
+      "district": "downtown"
+    },
+    {
+      "model": "bldg_hotel",
+      "pos": [
+        -45.0,
+        -45.0,
+        4.4
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        270.0
+      ],
+      "scale": 1.0,
+      "district": "downtown"
+    },
+    {
+      "model": "bldg_parking_garage",
+      "pos": [
+        95.0,
+        45.0,
+        5.0
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": 1.0,
+      "district": "downtown"
+    },
+    {
+      "model": "bldg_shopping_center",
+      "pos": [
+        45.0,
+        110.0,
+        5.0
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": 1.0,
+      "district": "commercial"
+    },
+    {
+      "model": "bldg_strip_mall",
+      "pos": [
+        -45.0,
+        110.0,
+        4.9
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": 1.0,
+      "district": "commercial"
+    },
+    {
+      "model": "bldg_restaurant",
+      "pos": [
+        95.0,
+        110.0,
+        5.2
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        90.0
+      ],
+      "scale": 1.0,
+      "district": "commercial"
+    },
+    {
+      "model": "bldg_diner",
+      "pos": [
+        -95.0,
+        110.0,
+        4.7
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        270.0
+      ],
+      "scale": 1.0,
+      "district": "commercial"
+    },
+    {
+      "model": "bldg_motel",
+      "pos": [
+        135.0,
+        110.0,
+        5.4
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": 1.0,
+      "district": "commercial"
+    },
+    {
+      "model": "bldg_small_commercial_building",
+      "pos": [
+        -135.0,
+        110.0,
+        4.5
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": 1.0,
+      "district": "commercial"
+    },
+    {
+      "model": "bldg_gas_station",
+      "pos": [
+        0.0,
+        125.0,
+        5.0
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": 1.0,
+      "district": "commercial"
+    },
+    {
+      "model": "bldg_residential_tower",
+      "pos": [
+        140.0,
+        -45.0,
+        5.5
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": 1.0,
+      "district": "residential"
+    },
+    {
+      "model": "bldg_luxury_apartment",
+      "pos": [
+        185.0,
+        -45.0,
+        6.0
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": 1.0,
+      "district": "residential"
+    },
+    {
+      "model": "bldg_townhouse",
+      "pos": [
+        185.0,
+        0.0,
+        6.2
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        90.0
+      ],
+      "scale": 1.0,
+      "district": "residential"
+    },
+    {
+      "model": "bldg_suburban_house",
+      "pos": [
+        220.0,
+        80.0,
+        9.5
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        45.0
+      ],
+      "scale": 1.0,
+      "district": "residential"
+    },
+    {
+      "model": "bldg_suburban_house",
+      "pos": [
+        250.0,
+        95.0,
+        11.0
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        30.0
+      ],
+      "scale": 1.0,
+      "district": "residential"
+    },
+    {
+      "model": "bldg_warehouse",
+      "pos": [
+        -45.0,
+        -110.0,
+        4.0
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": 1.0,
+      "district": "industrial"
+    },
+    {
+      "model": "bldg_factory",
+      "pos": [
+        45.0,
+        -110.0,
+        4.1
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": 1.0,
+      "district": "industrial"
+    },
+    {
+      "model": "bldg_industrial_building",
+      "pos": [
+        -95.0,
+        -110.0,
+        3.8
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        90.0
+      ],
+      "scale": 1.0,
+      "district": "industrial"
+    },
+    {
+      "model": "bldg_hospital",
+      "pos": [
+        140.0,
+        180.0,
+        6.5
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": 1.0,
+      "district": "civic"
+    },
+    {
+      "model": "bldg_police_station",
+      "pos": [
+        185.0,
+        180.0,
+        7.0
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": 1.0,
+      "district": "civic"
+    },
+    {
+      "model": "bldg_fire_station",
+      "pos": [
+        225.0,
+        180.0,
+        7.5
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": 1.0,
+      "district": "civic"
+    },
+    {
+      "model": "bldg_school",
+      "pos": [
+        140.0,
+        230.0,
+        7.2
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": 1.0,
+      "district": "civic"
+    },
+    {
+      "model": "prop_traffic_signal",
+      "pos": [
+        10.0,
+        10.0,
+        4.68
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": 1.0,
+      "district": "downtown"
+    },
+    {
+      "model": "prop_traffic_signal",
+      "pos": [
+        -10.0,
+        -10.0,
+        4.68
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        180.0
+      ],
+      "scale": 1.0,
+      "district": "downtown"
+    },
+    {
+      "model": "prop_hydrant",
+      "pos": [
+        9.5,
+        14.0,
+        4.68
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": 1.0,
+      "district": "downtown"
+    },
+    {
+      "model": "prop_mailbox",
+      "pos": [
+        -9.5,
+        14.0,
+        4.68
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": 1.0,
+      "district": "downtown"
+    },
+    {
+      "model": "prop_bench",
+      "pos": [
+        10.0,
+        25.0,
+        4.68
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        90.0
+      ],
+      "scale": 1.0,
+      "district": "downtown"
+    },
+    {
+      "model": "prop_bus_shelter",
+      "pos": [
+        -10.0,
+        35.0,
+        4.68
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        270.0
+      ],
+      "scale": 1.0,
+      "district": "downtown"
+    },
+    {
+      "model": "prop_traffic_sign",
+      "pos": [
+        9.5,
+        -14.0,
+        4.68
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": 1.0,
+      "district": "downtown"
+    },
+    {
+      "model": "prop_dumpster",
+      "pos": [
+        30.0,
+        -35.0,
+        4.5
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": 1.0,
+      "district": "downtown"
+    },
+    {
+      "model": "prop_guardrail",
+      "pos": [
+        12.0,
+        -210.0,
+        4.2
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": 1.0,
+      "district": "highway"
+    },
+    {
+      "model": "veg_palm_tree",
+      "pos": [
+        -10.5,
+        -120.0,
+        4.7
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        240.0
+      ],
+      "scale": 1.0,
+      "district": "downtown"
+    },
+    {
+      "model": "veg_palm_tree",
+      "pos": [
+        10.5,
+        -120.0,
+        4.7
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        241.0
+      ],
+      "scale": 1.0,
+      "district": "downtown"
+    },
+    {
+      "model": "veg_palm_tree",
+      "pos": [
+        -10.5,
+        -80.0,
+        4.7
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        280.0
+      ],
+      "scale": 1.0,
+      "district": "downtown"
+    },
+    {
+      "model": "veg_palm_tree",
+      "pos": [
+        10.5,
+        -80.0,
+        4.7
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        281.0
+      ],
+      "scale": 1.0,
+      "district": "downtown"
+    },
+    {
+      "model": "veg_palm_tree",
+      "pos": [
+        -10.5,
+        -40.0,
+        4.7
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        320.0
+      ],
+      "scale": 1.0,
+      "district": "downtown"
+    },
+    {
+      "model": "veg_palm_tree",
+      "pos": [
+        10.5,
+        -40.0,
+        4.7
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        321.0
+      ],
+      "scale": 1.0,
+      "district": "downtown"
+    },
+    {
+      "model": "veg_palm_tree",
+      "pos": [
+        -10.5,
+        40.0,
+        4.7
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        40.0
+      ],
+      "scale": 1.0,
+      "district": "downtown"
+    },
+    {
+      "model": "veg_palm_tree",
+      "pos": [
+        10.5,
+        40.0,
+        4.7
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        41.0
+      ],
+      "scale": 1.0,
+      "district": "downtown"
+    },
+    {
+      "model": "veg_palm_tree",
+      "pos": [
+        -10.5,
+        80.0,
+        4.7
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        80.0
+      ],
+      "scale": 1.0,
+      "district": "downtown"
+    },
+    {
+      "model": "veg_palm_tree",
+      "pos": [
+        10.5,
+        80.0,
+        4.7
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        81.0
+      ],
+      "scale": 1.0,
+      "district": "downtown"
+    },
+    {
+      "model": "veg_palm_tree",
+      "pos": [
+        -10.5,
+        120.0,
+        4.7
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        120.0
+      ],
+      "scale": 1.0,
+      "district": "downtown"
+    },
+    {
+      "model": "veg_palm_tree",
+      "pos": [
+        10.5,
+        120.0,
+        4.7
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        121.0
+      ],
+      "scale": 1.0,
+      "district": "downtown"
+    },
+    {
+      "model": "veg_oak_tree",
+      "pos": [
+        205.0,
+        75.0,
+        9.2
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": 1.0,
+      "district": "residential"
+    },
+    {
+      "model": "veg_oak_tree",
+      "pos": [
+        235.0,
+        90.0,
+        10.5
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": 1.0,
+      "district": "residential"
+    },
+    {
+      "model": "veg_pine_tree",
+      "pos": [
+        270.0,
+        120.0,
+        12.2
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": 1.0,
+      "district": "hills"
+    },
+    {
+      "model": "veg_shrub",
+      "pos": [
+        10.0,
+        20.0,
+        4.68
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": 1.0,
+      "district": "downtown"
+    },
+    {
+      "model": "infra_streetlight_cobra",
+      "pos": [
+        -10.2,
+        -140.0,
+        4.68
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        90.0
+      ],
+      "scale": 1.0,
+      "district": "downtown"
+    },
+    {
+      "model": "infra_streetlight_cobra",
+      "pos": [
+        10.2,
+        -140.0,
+        4.68
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        270.0
+      ],
+      "scale": 1.0,
+      "district": "downtown"
+    },
+    {
+      "model": "infra_streetlight_cobra",
+      "pos": [
+        -10.2,
+        -100.0,
+        4.68
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        90.0
+      ],
+      "scale": 1.0,
+      "district": "downtown"
+    },
+    {
+      "model": "infra_streetlight_cobra",
+      "pos": [
+        10.2,
+        -100.0,
+        4.68
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        270.0
+      ],
+      "scale": 1.0,
+      "district": "downtown"
+    },
+    {
+      "model": "infra_streetlight_cobra",
+      "pos": [
+        -10.2,
+        -60.0,
+        4.68
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        90.0
+      ],
+      "scale": 1.0,
+      "district": "downtown"
+    },
+    {
+      "model": "infra_streetlight_cobra",
+      "pos": [
+        10.2,
+        -60.0,
+        4.68
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        270.0
+      ],
+      "scale": 1.0,
+      "district": "downtown"
+    },
+    {
+      "model": "infra_streetlight_cobra",
+      "pos": [
+        -10.2,
+        -20.0,
+        4.68
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        90.0
+      ],
+      "scale": 1.0,
+      "district": "downtown"
+    },
+    {
+      "model": "infra_streetlight_cobra",
+      "pos": [
+        10.2,
+        -20.0,
+        4.68
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        270.0
+      ],
+      "scale": 1.0,
+      "district": "downtown"
+    },
+    {
+      "model": "infra_streetlight_cobra",
+      "pos": [
+        -10.2,
+        20.0,
+        4.68
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        90.0
+      ],
+      "scale": 1.0,
+      "district": "downtown"
+    },
+    {
+      "model": "infra_streetlight_cobra",
+      "pos": [
+        10.2,
+        20.0,
+        4.68
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        270.0
+      ],
+      "scale": 1.0,
+      "district": "downtown"
+    },
+    {
+      "model": "infra_streetlight_cobra",
+      "pos": [
+        -10.2,
+        60.0,
+        4.68
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        90.0
+      ],
+      "scale": 1.0,
+      "district": "downtown"
+    },
+    {
+      "model": "infra_streetlight_cobra",
+      "pos": [
+        10.2,
+        60.0,
+        4.68
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        270.0
+      ],
+      "scale": 1.0,
+      "district": "downtown"
+    },
+    {
+      "model": "infra_streetlight_cobra",
+      "pos": [
+        -10.2,
+        100.0,
+        4.68
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        90.0
+      ],
+      "scale": 1.0,
+      "district": "downtown"
+    },
+    {
+      "model": "infra_streetlight_cobra",
+      "pos": [
+        10.2,
+        100.0,
+        4.68
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        270.0
+      ],
+      "scale": 1.0,
+      "district": "downtown"
+    },
+    {
+      "model": "infra_streetlight_cobra",
+      "pos": [
+        -10.2,
+        140.0,
+        4.68
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        90.0
+      ],
+      "scale": 1.0,
+      "district": "downtown"
+    },
+    {
+      "model": "infra_streetlight_cobra",
+      "pos": [
+        10.2,
+        140.0,
+        4.68
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        270.0
+      ],
+      "scale": 1.0,
+      "district": "downtown"
+    },
+    {
+      "model": "infra_power_tower",
+      "pos": [
+        -150.0,
+        -280.0,
+        3.5
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": 1.0,
+      "district": "industrial"
+    },
+    {
+      "model": "infra_power_tower",
+      "pos": [
+        150.0,
+        -280.0,
+        3.8
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": 1.0,
+      "district": "industrial"
+    }
+  ],
+  "streetlights": [
+    {
+      "pos": [
+        -7.4,
+        -140.0,
+        14.18
+      ],
+      "type": "led",
+      "intensity": 1.0,
+      "radius": 22.0
+    },
+    {
+      "pos": [
+        7.4,
+        -140.0,
+        14.18
+      ],
+      "type": "sodium",
+      "intensity": 1.0,
+      "radius": 22.0
+    },
+    {
+      "pos": [
+        -7.4,
+        -100.0,
+        14.18
+      ],
+      "type": "led",
+      "intensity": 1.0,
+      "radius": 22.0
+    },
+    {
+      "pos": [
+        7.4,
+        -100.0,
+        14.18
+      ],
+      "type": "sodium",
+      "intensity": 1.0,
+      "radius": 22.0
+    },
+    {
+      "pos": [
+        -7.4,
+        -60.0,
+        14.18
+      ],
+      "type": "led",
+      "intensity": 1.0,
+      "radius": 22.0
+    },
+    {
+      "pos": [
+        7.4,
+        -60.0,
+        14.18
+      ],
+      "type": "sodium",
+      "intensity": 1.0,
+      "radius": 22.0
+    },
+    {
+      "pos": [
+        -7.4,
+        -20.0,
+        14.18
+      ],
+      "type": "led",
+      "intensity": 1.0,
+      "radius": 22.0
+    },
+    {
+      "pos": [
+        7.4,
+        -20.0,
+        14.18
+      ],
+      "type": "sodium",
+      "intensity": 1.0,
+      "radius": 22.0
+    },
+    {
+      "pos": [
+        -7.4,
+        20.0,
+        14.18
+      ],
+      "type": "led",
+      "intensity": 1.0,
+      "radius": 22.0
+    },
+    {
+      "pos": [
+        7.4,
+        20.0,
+        14.18
+      ],
+      "type": "sodium",
+      "intensity": 1.0,
+      "radius": 22.0
+    },
+    {
+      "pos": [
+        -7.4,
+        60.0,
+        14.18
+      ],
+      "type": "led",
+      "intensity": 1.0,
+      "radius": 22.0
+    },
+    {
+      "pos": [
+        7.4,
+        60.0,
+        14.18
+      ],
+      "type": "sodium",
+      "intensity": 1.0,
+      "radius": 22.0
+    },
+    {
+      "pos": [
+        -7.4,
+        100.0,
+        14.18
+      ],
+      "type": "led",
+      "intensity": 1.0,
+      "radius": 22.0
+    },
+    {
+      "pos": [
+        7.4,
+        100.0,
+        14.18
+      ],
+      "type": "sodium",
+      "intensity": 1.0,
+      "radius": 22.0
+    },
+    {
+      "pos": [
+        -7.4,
+        140.0,
+        14.18
+      ],
+      "type": "led",
+      "intensity": 1.0,
+      "radius": 22.0
+    },
+    {
+      "pos": [
+        7.4,
+        140.0,
+        14.18
+      ],
+      "type": "sodium",
+      "intensity": 1.0,
+      "radius": 22.0
+    }
+  ],
+  "meta": {
+    "total_models": 53,
+    "total_instances": 82,
+    "total_lights": 16
+  }
+}
