@@ -569,4 +569,4 @@ class TextureSynthesizer:
                     x0, y0 = c_idx * 128 + 6, r_idx * 128 + 6
                     x1, y1 = x0 + 116, y0 + 116
                     e_draw.rectangle([x0, y0, x1, y1], fill=(255, 235, 175))
-        self._save("glass_curtain_a_emissive", emissive_img, 'DXT1')
+        self._save("glass_a_emiss", emissive_img, 'DXT1')

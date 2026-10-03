@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------------------
 // tex_diffuse.fx - Universal Direct Texture Mapper for MTA:SA
 // Guarantees all world objects receive high-resolution photorealistic textures
-// directly via DirectX 9 hardware samplers without depending solely on TXD.
+// directly via DirectX 9 hardware samplers.
 //--------------------------------------------------------------------------------------
 
 texture gTexture;
@@ -50,8 +50,7 @@ technique TexDiffuse
 {
     pass P0
     {
-        // When vertex shader is omitted in MTA world texture replacement,
-        // MTA:SA passes through fixed-function world transform.
-        PixelShader = compile ps_2_0 PixelShaderFunction();
+        VertexShader = compile vs_2_0 VertexShaderFunction();
+        PixelShader  = compile ps_2_0 PixelShaderFunction();
     }
 }

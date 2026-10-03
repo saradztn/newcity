@@ -154,6 +154,9 @@
     <file src="textures/bldg_brick.png" />
     <file src="textures/bldg_stone.dds" />
     <file src="textures/bldg_stone.png" />
+    <file src="textures/city_bld.txd" />
+    <file src="textures/city_ground.txd" />
+    <file src="textures/city_infra.txd" />
     <file src="textures/city_textures.txd" />
     <file src="textures/concrete_normal.dds" />
     <file src="textures/concrete_normal.png" />
@@ -163,10 +166,10 @@
     <file src="textures/crosswalk.png" />
     <file src="textures/curb_stone.dds" />
     <file src="textures/curb_stone.png" />
+    <file src="textures/glass_a_emiss.dds" />
+    <file src="textures/glass_a_emiss.png" />
     <file src="textures/glass_curtain_a.dds" />
     <file src="textures/glass_curtain_a.png" />
-    <file src="textures/glass_curtain_a_emissive.dds" />
-    <file src="textures/glass_curtain_a_emissive.png" />
     <file src="textures/glass_curtain_b.dds" />
     <file src="textures/glass_curtain_b.png" />
     <file src="textures/grass_paver.dds" />

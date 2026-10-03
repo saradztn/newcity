@@ -363,11 +363,10 @@ class ProjectValidator:
         # 4. Validate DDS Textures and TXD
         tex_dir = os.path.join(self.resource_dir, "textures")
         if os.path.exists(tex_dir):
-            txd_path = os.path.join(tex_dir, "city_textures.txd")
-            if os.path.exists(txd_path):
-                self.validate_txd(txd_path)
             for f in sorted(os.listdir(tex_dir)):
-                if f.endswith(".dds"):
+                if f.endswith(".txd"):
+                    self.validate_txd(os.path.join(tex_dir, f))
+                elif f.endswith(".dds"):
                     self.validate_dds(os.path.join(tex_dir, f))
 
         # 5. Validate Models & Collisions

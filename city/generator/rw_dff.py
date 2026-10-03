@@ -154,7 +154,7 @@ class DFFMesh:
                 '<IBBBBIifff',
                 0,                   # flags
                 r, g, b, a,          # color RGBA
-                0x00010000,          # unused
+                0,                   # unused
                 1 if has_tex else 0, # isTextured
                 1.0,                 # ambient
                 0.0,                 # specular

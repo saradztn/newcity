@@ -24,7 +24,7 @@ function Renderer.Init()
         "roof_gravel", "metal_corrugated", "storefront_atlas", "neon_signs_atlas",
         "signs_atlas", "tunnel_tiles", "grass_paver", "oak_leaves", "palm_frond",
         "asphalt_normal", "highway_normal", "concrete_normal", "sidewalk_normal",
-        "roof_gravel_normal", "asphalt_puddle", "glass_curtain_a_emissive", "water_normal"
+        "roof_gravel_normal", "asphalt_puddle", "glass_a_emiss", "glass_curtain_a_emissive", "water_normal"
     }
 
     for _, name in ipairs(textureNames) do
@@ -75,11 +75,12 @@ function Renderer.Init()
         engineApplyShaderToWorldTexture(Renderer.Shaders.road, "asphalt_hwy")
     end
 
-    if Renderer.Shaders.building and Renderer.Textures.glass_curtain_a_emissive then
+    local emissiveTex = Renderer.Textures.glass_a_emiss or Renderer.Textures.glass_curtain_a_emissive
+    if Renderer.Shaders.building and emissiveTex then
         if Renderer.Textures.glass_curtain_a then
             dxSetShaderValue(Renderer.Shaders.building, "gTexture", Renderer.Textures.glass_curtain_a)
         end
-        dxSetShaderValue(Renderer.Shaders.building, "gEmissiveTexture", Renderer.Textures.glass_curtain_a_emissive)
+        dxSetShaderValue(Renderer.Shaders.building, "gEmissiveTexture", emissiveTex)
         engineApplyShaderToWorldTexture(Renderer.Shaders.building, "glass_curtain_a")
     end
 

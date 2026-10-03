@@ -33,15 +33,22 @@ function Streaming.Init()
 
     local lodMult = (Config and Config.CurrentPreset and Config.CurrentPreset.lodDistanceMultiplier) or 1.0
 
-    -- 1. Load TXD Texture Dictionary
-    if fileExists("textures/city_textures.txd") then
-        Streaming.TXD = engineLoadTXD("textures/city_textures.txd")
-        if Streaming.TXD then
-            outputDebugString("[NewCity Streaming] Successfully loaded city_textures.txd dictionary.")
-        else
-            outputDebugString("[NewCity Streaming] Warning: Native TXD failed to load; shader textures will provide fallback.", 2)
+    -- 1. Load TXD Texture Dictionaries (Modular + Master)
+    Streaming.TXDs = {}
+    local txdNames = {"city_ground", "city_bld", "city_infra", "city_textures"}
+    for _, tName in ipairs(txdNames) do
+        local path = "textures/" .. tName .. ".txd"
+        if fileExists(path) then
+            local txd = engineLoadTXD(path)
+            if txd then
+                Streaming.TXDs[tName] = txd
+                outputDebugString("[NewCity Streaming] Successfully loaded " .. tName .. ".txd dictionary.")
+            else
+                outputDebugString("[NewCity Streaming] Warning: Native TXD failed to load: " .. tName, 2)
+            end
         end
     end
+    Streaming.TXD = Streaming.TXDs["city_textures"] or Streaming.TXDs["city_ground"] or Streaming.TXDs["city_bld"]
 
     -- 2. Allocate & Load Models and Collisions
     local fallbackBaseId = 1337
@@ -59,10 +66,24 @@ function Streaming.Init()
         end
 
         if modelId and lodModelId then
-            -- A. Import TXD FIRST to both model and LOD model (Crucial for GTA SA RenderWare)
-            if Streaming.TXD then
-                engineImportTXD(Streaming.TXD, modelId)
-                engineImportTXD(Streaming.TXD, lodModelId)
+            -- A. Determine and Import TXD FIRST to both model and LOD model (Crucial for GTA SA RenderWare)
+            local targetTXD = nil
+            if string.find(name, "block") or string.find(name, "road") then
+                targetTXD = Streaming.TXDs["city_ground"]
+            elseif string.find(name, "bldg") then
+                targetTXD = Streaming.TXDs["city_bld"]
+            else
+                targetTXD = Streaming.TXDs["city_infra"]
+            end
+            targetTXD = targetTXD or Streaming.TXD
+
+            if targetTXD then
+                engineImportTXD(targetTXD, modelId)
+                engineImportTXD(targetTXD, lodModelId)
+            end
+            if Streaming.TXDs["city_textures"] and targetTXD ~= Streaming.TXDs["city_textures"] then
+                engineImportTXD(Streaming.TXDs["city_textures"], modelId)
+                engineImportTXD(Streaming.TXDs["city_textures"], lodModelId)
             end
 
             -- B. Load Collision (COL)

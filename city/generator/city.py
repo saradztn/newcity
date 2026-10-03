@@ -52,17 +52,36 @@ class CityOrchestrator:
         tex_synth = TextureSynthesizer(output_dir=self.textures_dir)
         generated_textures = tex_synth.generate_all()
 
-        # 2. Package RenderWare 3.6 Direct3D 9 TXD
-        print("Packaging RenderWare Texture Dictionary (city_textures.txd)...")
-        txd_builder = TXDBuilder()
-        for tex_name, pil_img in generated_textures.items():
-            is_dxt5 = ("leaves" in tex_name or "frond" in tex_name or "droplets" in tex_name or "halo" in tex_name or "clouds" in tex_name)
-            fmt = "DXT5" if is_dxt5 else "DXT1"
-            txd_builder.add_texture(tex_name, pil_img, format_type=fmt, has_alpha=is_dxt5)
+        # 2. Package RenderWare 3.6 Direct3D 9 TXD (Master & Modular dictionaries)
+        print("Packaging RenderWare Texture Dictionaries (city_textures.txd, city_ground.txd, city_bld.txd, city_infra.txd)...")
+        ground_names = {'asphalt_road', 'asphalt_hwy', 'crosswalk', 'sidewalk_paver', 'curb_stone', 'grass_paver', 'concrete_wall', 'water_normal'}
+        bld_names = {'glass_curtain_a', 'glass_curtain_b', 'bldg_brick', 'bldg_stone', 'roof_gravel', 'concrete_wall', 'metal_corrugated', 'storefront_atlas', 'neon_signs_atlas'}
+        infra_names = {'asphalt_road', 'asphalt_hwy', 'concrete_wall', 'metal_corrugated', 'signs_atlas', 'tunnel_tiles', 'oak_leaves', 'palm_frond'}
 
-        txd_path = os.path.join(self.textures_dir, "city_textures.txd")
-        txd_builder.save(txd_path)
-        print(f"Native TXD created successfully: {txd_path} ({len(generated_textures)} textures)")
+        txd_master = TXDBuilder()
+        txd_ground = TXDBuilder()
+        txd_bld = TXDBuilder()
+        txd_infra = TXDBuilder()
+
+        for tex_name, pil_img in generated_textures.items():
+            clean_name = tex_name.split('.')[0][:23]
+            has_alpha = ("leaves" in tex_name or "frond" in tex_name)
+            # Universal DXT1 format strictly conforming to GTA SA Direct3D 9 specifications
+            fmt = "DXT1"
+
+            txd_master.add_texture(clean_name, pil_img, fmt=fmt, has_alpha=has_alpha)
+            if clean_name in ground_names:
+                txd_ground.add_texture(clean_name, pil_img, fmt=fmt, has_alpha=has_alpha)
+            if clean_name in bld_names:
+                txd_bld.add_texture(clean_name, pil_img, fmt=fmt, has_alpha=has_alpha)
+            if clean_name in infra_names:
+                txd_infra.add_texture(clean_name, pil_img, fmt=fmt, has_alpha=has_alpha)
+
+        txd_master.save(os.path.join(self.textures_dir, "city_textures.txd"))
+        txd_ground.save(os.path.join(self.textures_dir, "city_ground.txd"))
+        txd_bld.save(os.path.join(self.textures_dir, "city_bld.txd"))
+        txd_infra.save(os.path.join(self.textures_dir, "city_infra.txd"))
+        print(f"Native TXDs created successfully: master ({len(generated_textures)} textures), ground, buildings, infrastructure.")
 
         # 3. Generate All 3D Geometry (DFF + LOD + COL)
         print("Generating 3D ground cells, buildings, infrastructure, props, and vegetation...")
